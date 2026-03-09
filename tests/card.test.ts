@@ -1,36 +1,37 @@
 import { expect, it, beforeEach, describe } from "vitest";
 import { Card } from "../src/card";
 describe("Card", () => {
-  it("Card cannot be created with an invalid rank", () => {
-    expect(() => new Card("invalid", "spades")).toThrow();
+  it("throws for an invalid rank", () => {
+    expect(() => new Card("king", "S")).toThrow("Invalid rank");
+    expect(() => new Card("ten", "S")).toThrow("Invalid rank");
   });
-  it("Card cannot be created with an invalid suit", () => {
-    expect(() => new Card("K", "invalid")).toThrow();
+  it("throws for an invalid suit", () => {
+    expect(() => new Card("K", "spades")).toThrow("Invalid suit");
+    expect(() => new Card("K", "♠")).toThrow("Invalid suit");
   });
 
-  let card: Card;
+  let KingOfSpades: Card;
+  let TenofHearts: Card;
 
   beforeEach(() => {
-    card = new Card("K", "S");
+    KingOfSpades = new Card("K", "S");
+    TenofHearts = new Card("10", "H");
   });
 
-  it("Card should have a suit", () => {
-    expect(card.getSuit()).toBeDefined();
+  it("stores the provided rank and suit", () => {
+    expect(KingOfSpades.getRank()).toBe("K");
+    expect(KingOfSpades.getSuit()).toBe("S");
+    expect(TenofHearts.getRank()).toBe("10");
+    expect(TenofHearts.getSuit()).toBe("H");
   });
 
-  it("Card should have a rank", () => {
-    expect(card.getRank()).toBeDefined();
+  it("returns a card's rank and suit as a verbose string", () => {
+    expect(KingOfSpades.toVerboseString()).toBe("King of Spades");
+    expect(TenofHearts.toVerboseString()).toBe("Ten of Hearts");
   });
 
-  it("Card is created with rank and suit and returns them", () => {
-    expect(card.getRank()).toBe("K");
-    expect(card.getSuit()).toBe("S");
-  });
-
-  it("Display a card's rank and suit as a verbose string", () => {
-    expect(card.toVerboseString()).toBe("King of Spades");
-  });
-  it("Display a card's rank and suit as a symbol", () => {
-    expect(card.toSymbolString()).toBe("K♠");
+  it("returns a card's rank and suit as a symbol", () => {
+    expect(KingOfSpades.toSymbolString()).toBe("K♠");
+    expect(TenofHearts.toSymbolString()).toBe("10♥");
   });
 });
