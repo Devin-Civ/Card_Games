@@ -1,5 +1,5 @@
 import { expect, it, beforeEach, describe } from "vitest";
-import { Card } from "../src/card";
+import { Card } from "../old_src/card";
 describe("Card", () => {
   it("throws for an invalid rank", () => {
     expect(() => new Card("king", "S")).toThrow("Invalid rank");
