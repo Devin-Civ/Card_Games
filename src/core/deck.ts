@@ -1,13 +1,23 @@
-export class Deck<TCard> {
-  private cards: TCard[];
+import { NotEnoughCardsError } from "./errors";
 
-  constructor(cards: TCard[]) {
-    this.cards = cards;
+export class Deck<TCard> {
+  private _cards: TCard[];
+
+  constructor(cards: Iterable<TCard>) {
+    this._cards = Array.from(cards);
   }
 
-  drawCard(): TCard {
-    const card = this.cards.pop();
-    if (!card) throw new Error("Deck is empty");
-    return card;
+  drawCards(numberOfCards: number = 1): TCard[] {
+    if (this.count < numberOfCards)
+      throw new NotEnoughCardsError(this.count, numberOfCards);
+    return this._cards.splice(-numberOfCards);
+  }
+
+  addCardsToBottom(cards: Iterable<TCard>) {
+    this._cards.push(...cards);
+  }
+
+  get count(): number {
+    return this._cards.length;
   }
 }
