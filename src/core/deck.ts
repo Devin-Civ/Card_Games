@@ -13,11 +13,34 @@ export class Deck<TCard> {
     return this._cards.splice(-numberOfCards);
   }
 
-  addCardsToBottom(cards: Iterable<TCard>) {
+  addCardsToTop(cards: Iterable<TCard>): void {
     this._cards.push(...cards);
+  }
+
+  addCardsToBottom(cards: Iterable<TCard>): void {
+    this._cards.unshift(...cards);
+  }
+
+  shuffle(): void {
+    fisherYatesShuffle(this._cards);
   }
 
   get count(): number {
     return this._cards.length;
   }
+}
+
+function fisherYatesShuffle<T>(array: T[]): void {
+  for (let i = array.length - 1; i >= 0; i--) {
+    const j = randomIntegerUpToInclusive(i);
+    swapArrayElements(array, i, j);
+  }
+}
+
+function randomIntegerUpToInclusive(upperBound: number): number {
+  return Math.floor(Math.random() * (upperBound + 1));
+}
+
+function swapArrayElements<T>(array: T[], i: number, j: number): void {
+  [array[i], array[j]] = [array[j], array[i]];
 }
