@@ -33,14 +33,10 @@ export class Deck<TCard> {
 function fisherYatesShuffle<T>(array: T[]): void {
   for (let i = array.length - 1; i >= 0; i--) {
     const j = randomIntegerUpToInclusive(i);
-    swapArrayElements(array, i, j);
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
 function randomIntegerUpToInclusive(upperBound: number): number {
   return Math.floor(Math.random() * (upperBound + 1));
-}
-
-function swapArrayElements<T>(array: T[], i: number, j: number): void {
-  [array[i], array[j]] = [array[j], array[i]];
 }
