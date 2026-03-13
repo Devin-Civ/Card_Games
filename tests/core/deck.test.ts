@@ -71,4 +71,17 @@ describe("Deck", () => {
     expect(cards).toContainEqual({ id: 3 });
     expect(cards).toContainEqual({ id: 4 });
   });
+
+  it("cuts the deck, moving cards at and above the given index to the bottom of the deck", () => {
+    testDeck.addCardsToTop([{ id: 2 }, { id: 3 }, { id: 4 }]);
+    testDeck.cut(2);
+    expect(testDeck.count).toBe(4);
+    expect(testDeck.drawCards(2)).toEqual([{ id: 1 }, { id: 2 }]);
+  });
+
+  it("cuts the deck at a random index when no index is provided", () => {
+    testDeck.addCardsToTop([{ id: 2 }, { id: 3 }, { id: 4 }]);
+    testDeck.cut();
+    expect(testDeck.count).toBe(4);
+  });
 });

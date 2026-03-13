@@ -28,6 +28,10 @@ export class Deck<TCard> {
   get count(): number {
     return this._cards.length;
   }
+
+  cut(index: number = randomIntegerUpToInclusive(this.count)): void {
+    this._cards = [...this._cards.slice(index), ...this._cards.slice(0, index)];
+  }
 }
 
 function fisherYatesShuffle<T>(array: T[]): void {
