@@ -17,13 +17,13 @@ import {
 } from "../../../../src/games/standard/scoundrel/scoundrel.ts";
 import { createScoundrelDeck } from "../../../../src/games/standard/scoundrel/scoundrel.ts";
 
-const std = (rank: Rank, suit: Suit): StandardPlayingCard => ({
+export const std = (rank: Rank, suit: Suit): StandardPlayingCard => ({
   kind: "suited",
   rank,
   suit,
 });
 
-const joker = (color: "red" | "black"): StandardPlayingCard => ({
+export const joker = (color: "red" | "black"): StandardPlayingCard => ({
   kind: "joker",
   color,
 });
