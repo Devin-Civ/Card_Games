@@ -13,7 +13,7 @@ describe("createStandardDeck", () => {
   it("creates a deck with the correct cards", () => {
     expect(createStandardDeck().drawCards(52)).toEqual(
       RANK.flatMap((rank) =>
-        SUIT.map((suit) => ({ kind: "standard", rank, suit })),
+        SUIT.map((suit) => ({ kind: "suited", rank, suit })),
       ),
     );
   });
@@ -26,7 +26,7 @@ describe("createStandardDeck", () => {
     ]);
     expect(deck.drawCards(52)).toEqual(
       RANK.flatMap((rank) =>
-        SUIT.map((suit) => ({ kind: "standard", rank, suit })),
+        SUIT.map((suit) => ({ kind: "suited", rank, suit })),
       ),
     );
   });

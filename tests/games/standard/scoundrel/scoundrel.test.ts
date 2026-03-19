@@ -18,7 +18,7 @@ import {
 import { createScoundrelDeck } from "../../../../src/games/standard/scoundrel/scoundrel.ts";
 
 const std = (rank: Rank, suit: Suit): StandardPlayingCard => ({
-  kind: "standard",
+  kind: "suited",
   rank,
   suit,
 });

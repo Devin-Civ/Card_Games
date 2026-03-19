@@ -27,13 +27,13 @@ export type EquippedWeapon = {
 };
 
 export function isMonster(card: StandardPlayingCard): boolean {
-  return card.kind === "standard" && MONSTER_SUITS.includes(card.suit);
+  return card.kind === "suited" && MONSTER_SUITS.includes(card.suit);
 }
 
 export function isWeapon(card: StandardPlayingCard): boolean {
   const weaponRanks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   return (
-    card.kind === "standard" &&
+    card.kind === "suited" &&
     card.suit === "D" &&
     weaponRanks.includes(card.rank)
   );
@@ -42,14 +42,14 @@ export function isWeapon(card: StandardPlayingCard): boolean {
 export function isPotion(card: StandardPlayingCard): boolean {
   const potionRanks = ["2", "3", "4", "5", "6", "7", "8", "9", "10"];
   return (
-    card.kind === "standard" &&
+    card.kind === "suited" &&
     card.suit === "H" &&
     potionRanks.includes(card.rank)
   );
 }
 
 export function rankToValue(card: StandardPlayingCard): number {
-  if (card.kind !== "standard") throw new Error("Card does not have a value");
+  if (card.kind !== "suited") throw new Error("Card does not have a value");
   if (!isMonster(card) && !isWeapon(card) && !isPotion(card))
     throw new Error("Card is not a monster, weapon, or potion");
   return RANK_TO_VALUE_MAP[card.rank];
@@ -95,7 +95,7 @@ export function createScoundrelDeck(): Deck<StandardPlayingCard> {
 
 function isRedFaceCard(card: StandardPlayingCard): boolean {
   return (
-    card.kind === "standard" &&
+    card.kind === "suited" &&
     ["H", "D"].includes(card.suit) &&
     ["J", "Q", "K"].includes(card.rank)
   );
@@ -103,7 +103,7 @@ function isRedFaceCard(card: StandardPlayingCard): boolean {
 
 function isRedAce(card: StandardPlayingCard): boolean {
   return (
-    card.kind === "standard" &&
+    card.kind === "suited" &&
     ["H", "D"].includes(card.suit) &&
     card.rank === "A"
   );
