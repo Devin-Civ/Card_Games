@@ -4,18 +4,12 @@ import {
   isWeapon,
   isPotion,
   rankToValue,
-} from "../../../../src/games/standard/scoundrel/scoundrel.ts";
+} from "../../../../src/games/standard/scoundrel/cards.ts";
 import {
   Rank,
   StandardPlayingCard,
   Suit,
 } from "../../../../src/games/standard/cards.ts";
-import {
-  EquippedWeapon,
-  createEquippedWeapon,
-  canSlayMonster,
-} from "../../../../src/games/standard/scoundrel/scoundrel.ts";
-import { createScoundrelDeck } from "../../../../src/games/standard/scoundrel/scoundrel.ts";
 
 export const std = (rank: Rank, suit: Suit): StandardPlayingCard => ({
   kind: "suited",
@@ -27,19 +21,6 @@ export const joker = (color: "red" | "black"): StandardPlayingCard => ({
   kind: "joker",
   color,
 });
-
-const EXCLUDED_SCOUNDREL_CARDS: StandardPlayingCard[] = [
-  joker("red"),
-  joker("black"),
-  std("A", "H"),
-  std("A", "D"),
-  std("J", "H"),
-  std("Q", "H"),
-  std("K", "H"),
-  std("J", "D"),
-  std("Q", "D"),
-  std("K", "D"),
-];
 
 describe("Scoundrel", () => {
   it.each([
@@ -89,31 +70,4 @@ describe("Scoundrel", () => {
       expect(() => rankToValue(card)).toThrow();
     },
   );
-
-  it("can equip a weapon card and view it as a weapon", () => {
-    const weaponCard: StandardPlayingCard = std("7", "D");
-    const currentWeapon: EquippedWeapon = createEquippedWeapon(weaponCard);
-    expect(currentWeapon.baseCard).toEqual(weaponCard);
-    expect(currentWeapon.slainMonsters).toEqual([]);
-    expect(currentWeapon.upgradeBonus).toBe(0);
-    expect(currentWeapon.disabled).toBe(false);
-  });
-
-  it("can check if a weapon can slay a monster", () => {
-    const currentWeapon: EquippedWeapon = createEquippedWeapon(std("7", "D"));
-    expect(canSlayMonster(currentWeapon, std("A", "S"))).toBe(true);
-    expect(canSlayMonster(currentWeapon, std("8", "S"))).toBe(true);
-    currentWeapon.slainMonsters.push(std("A", "S"));
-    expect(canSlayMonster(currentWeapon, std("A", "C"))).toBe(false);
-    expect(canSlayMonster(currentWeapon, std("8", "C"))).toBe(true);
-  });
-
-  it("can remove red face cards, aces, and both jokers from a deck", () => {
-    const deck = createScoundrelDeck();
-    expect(deck.count).toBe(44);
-    const cards = deck.drawCards(44);
-    for (const card of EXCLUDED_SCOUNDREL_CARDS) {
-      expect(cards).not.toContainEqual(card);
-    }
-  });
 });

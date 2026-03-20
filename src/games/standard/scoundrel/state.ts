@@ -1,11 +1,8 @@
 import { Deck } from "../../../core/deck";
 import { StandardPlayingCard } from "../cards";
-import {
-  createScoundrelDeck,
-  EquippedWeapon,
-  isMonster,
-  rankToValue,
-} from "./scoundrel";
+import { isMonster, rankToValue } from "./cards";
+import { createScoundrelDeck } from "./createScoundrelDeck";
+import { EquippedWeapon } from "./weapons";
 
 const DEFAULT_PLAYER_HEALTH = 20;
 
