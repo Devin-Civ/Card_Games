@@ -2,24 +2,18 @@ import { it, describe, expect, beforeEach } from "vitest";
 import { createScoundrelState } from "../../../../src/games/standard/scoundrel/state";
 import {
   usePotion,
-  discardCard,
   drawRoom,
+  equipWeapon,
+  fightMonsterBarehanded,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { std } from "./cards.test";
+import { createEquippedWeapon } from "../../../../src/games/standard/scoundrel/weapons";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
 
 describe("PlayerActions", () => {
   let state: ScoundrelState;
   beforeEach(() => {
     state = createScoundrelState();
-  });
-
-  describe("discardCard", () => {
-    it("can discard a card to the discard pile", () => {
-      const card = std("A", "S");
-      discardCard(state, card);
-      expect(state.discardPile).toContain(card);
-    });
   });
 
   describe("usePotion", () => {
@@ -68,6 +62,46 @@ describe("PlayerActions", () => {
       usePotion(state, std("2", "H"));
       drawRoom(state);
       expect(() => usePotion(state, std("3", "H"))).not.toThrow();
+    });
+  });
+
+  describe("equipWeapon", () => {
+    it("can equip a weapon to a player", () => {
+      equipWeapon(state, std("7", "D"));
+      expect(state.player.equippedWeapon).toEqual(
+        createEquippedWeapon(std("7", "D")),
+      );
+    });
+
+    it("throws an error if a non-weapon card is attempted to be equipped", () => {
+      expect(() => equipWeapon(state, std("A", "S"))).toThrow(
+        "equipWeapon expected a weapon card",
+      );
+    });
+
+    it("discards the previously equipped weapon when a new weapon is equipped", () => {
+      equipWeapon(state, std("7", "D"));
+      expect(state.discardPile).not.toContainEqual(std("7", "D"));
+      equipWeapon(state, std("8", "D"));
+      expect(state.discardPile).toContainEqual(std("7", "D"));
+    });
+  });
+
+  describe("fightMonsterBarehanded", () => {
+    it("fighting a monster barehanded reduces player health by the monster's value", () => {
+      state.player.health = 10;
+      fightMonsterBarehanded(state, std("4", "S"));
+      expect(state.player.health).toBe(6);
+      fightMonsterBarehanded(state, std("5", "S"));
+      expect(state.player.health).toBe(1);
+      fightMonsterBarehanded(state, std("6", "S"));
+      expect(state.player.health).toBe(-5);
+    });
+
+    it("throws an error if a non-monster card is attempted to be fought", () => {
+      expect(() => fightMonsterBarehanded(state, std("A", "H"))).toThrow(
+        "fightMonsterBarehanded expected a monster card",
+      );
     });
   });
 });

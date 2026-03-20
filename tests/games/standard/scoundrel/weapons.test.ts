@@ -5,8 +5,6 @@ import {
   createEquippedWeapon,
 } from "../../../../src/games/standard/scoundrel/weapons";
 import { StandardPlayingCard } from "../../../../src/games/standard/cards";
-import { createScoundrelState } from "../../../../src/games/standard/scoundrel/state";
-import { equipWeapon } from "../../../../src/games/standard/scoundrel/actions";
 import { EquippedWeapon } from "../../../../src/games/standard/scoundrel/types";
 
 describe("Weapons", () => {
@@ -29,31 +27,6 @@ describe("Weapons", () => {
       currentWeapon.slainMonsters.push(std("A", "S"));
       expect(canSlayMonster(currentWeapon, std("A", "C"))).toBe(false);
       expect(canSlayMonster(currentWeapon, std("8", "C"))).toBe(true);
-    });
-  });
-
-  describe("equipWeapon", () => {
-    it("can equip a weapon to a player", () => {
-      const state = createScoundrelState();
-      equipWeapon(state, std("7", "D"));
-      expect(state.player.equippedWeapon).toEqual(
-        createEquippedWeapon(std("7", "D")),
-      );
-    });
-
-    it("throws an error if a non-weapon card is attempted to be equipped", () => {
-      const state = createScoundrelState();
-      expect(() => equipWeapon(state, std("A", "S"))).toThrow(
-        "equipWeapon expected a weapon card",
-      );
-    });
-
-    it("discards the previously equipped weapon when a new weapon is equipped", () => {
-      const state = createScoundrelState();
-      equipWeapon(state, std("7", "D"));
-      expect(state.discardPile).not.toContainEqual(std("7", "D"));
-      equipWeapon(state, std("8", "D"));
-      expect(state.discardPile).toContainEqual(std("7", "D"));
     });
   });
 });

@@ -1,5 +1,5 @@
 import { StandardPlayingCard } from "../../cards";
-import { isPotion, isWeapon, rankToValue } from "../cards";
+import { isMonster, isPotion, isWeapon, rankToValue } from "../cards";
 import { ScoundrelState } from "../types";
 import { createEquippedWeapon } from "../weapons";
 import { discardCard } from "./discard";
@@ -37,4 +37,14 @@ export function equipWeapon(
     discardCard(state, state.player.equippedWeapon.baseCard);
   }
   state.player.equippedWeapon = createEquippedWeapon(weaponCard);
+}
+
+export function fightMonsterBarehanded(
+  state: ScoundrelState,
+  monster: StandardPlayingCard,
+): void {
+  if (!isMonster(monster)) {
+    throw new Error("fightMonsterBarehanded expected a monster card");
+  }
+  state.player.health -= rankToValue(monster);
 }
