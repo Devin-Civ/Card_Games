@@ -1,12 +1,7 @@
 import { StandardPlayingCard } from "../cards";
-import { rankToValue } from "./cards";
-
-export type EquippedWeapon = {
-  baseCard: StandardPlayingCard;
-  slainMonsters: StandardPlayingCard[];
-  upgradeBonus: number;
-  disabled: boolean;
-};
+import { discardCard } from "./actions";
+import { isWeapon, rankToValue } from "./cards";
+import type { EquippedWeapon, ScoundrelPlayer, ScoundrelState } from "./types";
 
 export function createEquippedWeapon(
   weaponCard: StandardPlayingCard,
@@ -33,4 +28,17 @@ export function canSlayMonster(
   if (lastMonster === null) return true;
   else
     return !weapon.disabled && rankToValue(monster) < rankToValue(lastMonster);
+}
+
+export function equipWeapon(
+  state: ScoundrelState,
+  weaponCard: StandardPlayingCard,
+): void {
+  if (!isWeapon(weaponCard)) {
+    throw new Error("equipWeapon expected a weapon card");
+  }
+  if (state.player.equippedWeapon) {
+    discardCard(state, state.player.equippedWeapon.baseCard);
+  }
+  state.player.equippedWeapon = createEquippedWeapon(weaponCard);
 }

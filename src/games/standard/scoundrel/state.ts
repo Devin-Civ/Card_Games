@@ -2,21 +2,9 @@ import { Deck } from "../../../core/deck";
 import { StandardPlayingCard } from "../cards";
 import { isMonster, rankToValue } from "./cards";
 import { createScoundrelDeck } from "./createScoundrelDeck";
-import { EquippedWeapon } from "./weapons";
+import { ScoundrelState } from "./types";
 
 const DEFAULT_PLAYER_HEALTH = 20;
-
-export type ScoundrelState = {
-  dungeon: Deck<StandardPlayingCard>;
-  player: {
-    health: number;
-    maxHealth: number;
-    equippedWeapon: EquippedWeapon | null;
-  };
-  room: StandardPlayingCard[];
-  discardPile: StandardPlayingCard[];
-  ranFromPreviousRoom: boolean;
-};
 
 export function createScoundrelState(): ScoundrelState {
   return {

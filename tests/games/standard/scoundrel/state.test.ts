@@ -2,11 +2,11 @@ import { it, describe, expect, beforeEach } from "vitest";
 import {
   createScoundrelState,
   isGameOver,
-  ScoundrelState,
   calculateFinalScore,
   getTotalMonsterStrength,
 } from "../../../../src/games/standard/scoundrel/state";
-import { std } from "./scoundrel.test";
+import { std } from "./cards.test";
+import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
 
 describe("ScoundrelState", () => {
   let state: ScoundrelState;

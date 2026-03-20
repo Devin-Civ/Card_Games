@@ -4,6 +4,8 @@ import {
   drawRoom,
   avoidRoom,
 } from "../../../../src/games/standard/scoundrel/actions";
+import { std } from "./cards.test";
+import { discardCard } from "../../../../src/games/standard/scoundrel/actions";
 
 describe("Actions", () => {
   it("draws enough cards to fill the room", () => {
@@ -42,5 +44,12 @@ describe("Actions", () => {
     state.ranFromPreviousRoom = true;
     avoidRoom(state);
     expect(state.room).toBe(firstRoom);
+  });
+
+  it("can discard a card to the discard pile", () => {
+    const state = createScoundrelState();
+    const card = std("A", "S");
+    discardCard(state, card);
+    expect(state.discardPile).toContain(card);
   });
 });

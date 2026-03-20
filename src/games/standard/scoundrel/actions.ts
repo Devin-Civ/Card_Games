@@ -1,4 +1,5 @@
-import { ScoundrelState } from "./state";
+import { StandardPlayingCard } from "../cards";
+import { ScoundrelState } from "./types";
 
 const ROOM_SIZE = 4;
 
@@ -13,4 +14,11 @@ export function avoidRoom(state: ScoundrelState): void {
   state.room = [];
   drawRoom(state);
   state.ranFromPreviousRoom = true;
+}
+
+export function discardCard(
+  state: ScoundrelState,
+  card: StandardPlayingCard,
+): void {
+  state.discardPile.push(card);
 }

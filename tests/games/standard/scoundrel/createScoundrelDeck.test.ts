@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { joker, std } from "./scoundrel.test";
+import { joker, std } from "./cards.test";
 import { createScoundrelDeck } from "../../../../src/games/standard/scoundrel/createScoundrelDeck";
 import { StandardPlayingCard } from "../../../../src/games/standard/cards";
 
