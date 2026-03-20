@@ -17,6 +17,7 @@ export function createScoundrelState(): ScoundrelState {
     room: [],
     discardPile: [],
     ranFromPreviousRoom: false,
+    potionUsedInCurrentRoom: false,
   };
 }
 

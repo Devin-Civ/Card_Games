@@ -7,6 +7,7 @@ export type ScoundrelState = {
   room: StandardPlayingCard[];
   discardPile: StandardPlayingCard[];
   ranFromPreviousRoom: boolean;
+  potionUsedInCurrentRoom: boolean;
 };
 
 export type ScoundrelPlayer = {

@@ -1,0 +1,73 @@
+import { it, describe, expect, beforeEach } from "vitest";
+import { createScoundrelState } from "../../../../src/games/standard/scoundrel/state";
+import {
+  usePotion,
+  discardCard,
+  drawRoom,
+} from "../../../../src/games/standard/scoundrel/actions";
+import { std } from "./cards.test";
+import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
+
+describe("PlayerActions", () => {
+  let state: ScoundrelState;
+  beforeEach(() => {
+    state = createScoundrelState();
+  });
+
+  describe("discardCard", () => {
+    it("can discard a card to the discard pile", () => {
+      const card = std("A", "S");
+      discardCard(state, card);
+      expect(state.discardPile).toContain(card);
+    });
+  });
+
+  describe("usePotion", () => {
+    it("can apply a potion to the player", () => {
+      const card = std("9", "H");
+      state.player.health = 10;
+      usePotion(state, card);
+      expect(state.player.health).toBe(19);
+    });
+
+    it("throws an error if a non-potion card is attempted to be applied", () => {
+      const card = std("A", "S");
+      expect(() => usePotion(state, card)).toThrow(
+        "applyPotion expected a potion card",
+      );
+    });
+
+    it("discards the potion card after it is applied", () => {
+      const card = std("9", "H");
+      state.player.health = 10;
+      usePotion(state, card);
+      expect(state.discardPile).toContain(card);
+    });
+
+    it("doesn't increase player health beyond max health", () => {
+      state.player.health = 10;
+      state.player.maxHealth = 10;
+      usePotion(state, std("9", "H"));
+      expect(state.player.health).toBe(10);
+      state.potionUsedInCurrentRoom = false;
+      state.player.maxHealth = 15;
+      usePotion(state, std("9", "H"));
+      expect(state.player.health).toBe(15);
+    });
+
+    it("only allows one health potion per room", () => {
+      state.player.health = 1;
+      usePotion(state, std("2", "H"));
+      expect(() => usePotion(state, std("3", "H"))).toThrow(
+        "Only one health potion can be used per room",
+      );
+    });
+
+    it("allows using a potion again in a new room", () => {
+      state.player.health = 1;
+      usePotion(state, std("2", "H"));
+      drawRoom(state);
+      expect(() => usePotion(state, std("3", "H"))).not.toThrow();
+    });
+  });
+});
