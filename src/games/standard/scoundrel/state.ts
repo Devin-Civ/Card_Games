@@ -1,6 +1,4 @@
-import { Deck } from "../../../core/deck";
-import { StandardPlayingCard } from "../cards";
-import { isMonster, rankToValue } from "./cards";
+import { getTotalMonsterStrength, isMonster } from "./cards";
 import { createScoundrelDeck } from "./createScoundrelDeck";
 import { ScoundrelState } from "./types";
 
@@ -41,10 +39,4 @@ export function calculateFinalScore(state: ScoundrelState): number {
     getTotalMonsterStrength(state.room) -
     getTotalMonsterStrength(state.dungeon.drawCards(state.dungeon.count))
   );
-}
-
-export function getTotalMonsterStrength(cards: StandardPlayingCard[]): number {
-  return cards
-    .filter(isMonster)
-    .reduce((sum, card) => sum + rankToValue(card), 0);
 }

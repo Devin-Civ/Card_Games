@@ -3,7 +3,6 @@ import {
   createScoundrelState,
   isGameOver,
   calculateFinalScore,
-  getTotalMonsterStrength,
 } from "../../../../src/games/standard/scoundrel/state";
 import { std } from "./cards.test";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
@@ -66,17 +65,12 @@ describe("ScoundrelState", () => {
       expect(calculateFinalScore(state)).toBe(10);
       state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
       expect(calculateFinalScore(state)).toBe(10 - 28);
-      state.dungeon.addCardsToTop([std("8", "S"), std("8", "C"), std("A", "H")]);
+      state.dungeon.addCardsToTop([
+        std("8", "S"),
+        std("8", "C"),
+        std("A", "H"),
+      ]);
       expect(calculateFinalScore(state)).toBe(10 - 28 - 16);
-    });
-  });
-
-  describe("getTotalMonsterStrength", () => {
-    it("calculates the total monster strength in an array", () => {
-      const cards = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
-      expect(getTotalMonsterStrength(cards)).toBe(28);
-      cards.push(std("4", "S"));
-      expect(getTotalMonsterStrength(cards)).toBe(32);
     });
   });
 });

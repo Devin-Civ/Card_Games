@@ -1,5 +1,5 @@
 import { StandardPlayingCard } from "../cards";
-import { rankToValue } from "./cards";
+import { isMonster, rankToValue } from "./cards";
 import type { EquippedWeapon } from "./types";
 
 export function createEquippedWeapon(
@@ -29,3 +29,17 @@ export function canSlayMonster(
     return !weapon.disabled && rankToValue(monster) < rankToValue(lastMonster);
 }
 
+export function addMonsterToWeapon(
+  weapon: EquippedWeapon,
+  monster: StandardPlayingCard,
+): void {
+  if (!isMonster(monster)) {
+    throw new Error("addMonsterToWeapon expected a monster card");
+  }
+  if (lastSlainMonster(weapon) && !canSlayMonster(weapon, monster)) {
+    throw new Error(
+      "addMonsterToWeapon expected a lower ranked monster than last slain",
+    );
+  }
+  weapon.slainMonsters.push(monster);
+}

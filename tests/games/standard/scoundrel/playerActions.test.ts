@@ -4,7 +4,9 @@ import {
   usePotion,
   drawRoom,
   equipWeapon,
-  fightMonsterBarehanded,
+  calculateMonsterDamageBarehanded,
+  calculateMonsterDamageWithWeapon,
+  applyDamageToPlayer,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { std } from "./cards.test";
 import { createEquippedWeapon } from "../../../../src/games/standard/scoundrel/weapons";
@@ -87,21 +89,47 @@ describe("PlayerActions", () => {
     });
   });
 
-  describe("fightMonsterBarehanded", () => {
+  describe("calculateMonsterDamage", () => {
     it("fighting a monster barehanded reduces player health by the monster's value", () => {
-      state.player.health = 10;
-      fightMonsterBarehanded(state, std("4", "S"));
-      expect(state.player.health).toBe(6);
-      fightMonsterBarehanded(state, std("5", "S"));
-      expect(state.player.health).toBe(1);
-      fightMonsterBarehanded(state, std("6", "S"));
-      expect(state.player.health).toBe(-5);
+      expect(calculateMonsterDamageBarehanded(std("4", "S"))).toBe(4);
+      expect(calculateMonsterDamageBarehanded(std("5", "S"))).toBe(5);
+      expect(calculateMonsterDamageBarehanded(std("6", "S"))).toBe(6);
     });
 
-    it("throws an error if a non-monster card is attempted to be fought", () => {
-      expect(() => fightMonsterBarehanded(state, std("A", "H"))).toThrow(
-        "fightMonsterBarehanded expected a monster card",
+    it("throws an error if a non-monster card is attempted to be fought barehanded", () => {
+      expect(() => calculateMonsterDamageBarehanded(std("A", "H"))).toThrow(
+        "calculateMonsterDamageBarehanded expected a monster card",
       );
+    });
+
+    it("fighting a monster with a weapon reduces player health by monster - weapon value", () => {
+      const weapon = createEquippedWeapon(std("3", "D"));
+      expect(calculateMonsterDamageWithWeapon(std("4", "S"), weapon)).toBe(1);
+      expect(calculateMonsterDamageWithWeapon(std("6", "S"), weapon)).toBe(3);
+      expect(calculateMonsterDamageWithWeapon(std("2", "S"), weapon)).toBe(0);
+    });
+
+    it("throws an error if a non-monster card is attempted to be fought with a weapon", () => {
+      const weapon = createEquippedWeapon(std("2", "D"));
+      expect(() =>
+        calculateMonsterDamageWithWeapon(std("A", "H"), weapon),
+      ).toThrow("calculateMonsterDamageWithWeapon expected a monster card");
+    });
+
+    it("adds the weapon's upgrade bonus to its value", () => {
+      const weapon = createEquippedWeapon(std("2", "D"));
+      weapon.upgradeBonus = 3;
+      expect(calculateMonsterDamageWithWeapon(std("8", "S"), weapon)).toBe(3);
+      expect(calculateMonsterDamageWithWeapon(std("6", "S"), weapon)).toBe(1);
+      expect(calculateMonsterDamageWithWeapon(std("4", "S"), weapon)).toBe(0);
+    });
+  });
+
+  describe("applyDamageToPlayer", () => {
+    it("reduces player health by the damage amount", () => {
+      state.player.health = 10;
+      applyDamageToPlayer(state.player, 5);
+      expect(state.player.health).toBe(5);
     });
   });
 });

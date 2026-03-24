@@ -45,3 +45,9 @@ export function rankToValue(card: StandardPlayingCard): number {
     throw new Error("Card is not a monster, weapon, or potion");
   return RANK_TO_VALUE_MAP[card.rank];
 }
+
+export function getTotalMonsterStrength(cards: StandardPlayingCard[]): number {
+  return cards
+    .filter(isMonster)
+    .reduce((sum, card) => sum + rankToValue(card), 0);
+}
