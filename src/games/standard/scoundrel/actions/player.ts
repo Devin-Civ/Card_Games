@@ -1,6 +1,6 @@
 import { StandardPlayingCard } from "../../cards";
-import { isMonster, isPotion, isWeapon, rankToValue } from "../cards";
-import { EquippedWeapon, ScoundrelPlayer, ScoundrelState } from "../types";
+import { isPotion, isWeapon, rankToValue } from "../cards";
+import { ScoundrelState } from "../types";
 import { createEquippedWeapon } from "../weapons";
 import { discardCard } from "./discard";
 
@@ -37,33 +37,4 @@ export function equipWeapon(
     discardCard(state, state.player.equippedWeapon.baseCard);
   }
   state.player.equippedWeapon = createEquippedWeapon(weaponCard);
-}
-
-export function calculateMonsterDamageBarehanded(
-  monster: StandardPlayingCard,
-): number {
-  if (!isMonster(monster)) {
-    throw new Error("calculateMonsterDamageBarehanded expected a monster card");
-  }
-  return rankToValue(monster);
-}
-
-export function calculateMonsterDamageWithWeapon(
-  monster: StandardPlayingCard,
-  weapon: EquippedWeapon,
-): number {
-  if (!isMonster(monster)) {
-    throw new Error("calculateMonsterDamageWithWeapon expected a monster card");
-  }
-  return Math.max(
-    0,
-    rankToValue(monster) - (rankToValue(weapon.baseCard) + weapon.upgradeBonus),
-  );
-}
-
-export function applyDamageToPlayer(
-  player: ScoundrelPlayer,
-  damage: number,
-): void {
-  player.health -= damage;
 }

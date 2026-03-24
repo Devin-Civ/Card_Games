@@ -20,5 +20,10 @@ export type EquippedWeapon = {
   baseCard: StandardPlayingCard;
   slainMonsters: StandardPlayingCard[];
   upgradeBonus: number;
-  disabled: boolean;
 };
+
+export type CardActionType =
+  | "fightBarehanded"
+  | "fightWithWeapon"
+  | "usePotion"
+  | "equipWeapon";

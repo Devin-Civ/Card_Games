@@ -9,7 +9,6 @@ export function createEquippedWeapon(
     baseCard: weaponCard,
     slainMonsters: [],
     upgradeBonus: 0,
-    disabled: false,
   };
 }
 
@@ -25,8 +24,7 @@ export function canSlayMonster(
 ): boolean {
   const lastMonster = lastSlainMonster(weapon);
   if (lastMonster === null) return true;
-  else
-    return !weapon.disabled && rankToValue(monster) < rankToValue(lastMonster);
+  else return rankToValue(monster) < rankToValue(lastMonster);
 }
 
 export function addMonsterToWeapon(

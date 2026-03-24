@@ -16,7 +16,6 @@ describe("Weapons", () => {
       expect(currentWeapon.baseCard).toEqual(weaponCard);
       expect(currentWeapon.slainMonsters).toEqual([]);
       expect(currentWeapon.upgradeBonus).toBe(0);
-      expect(currentWeapon.disabled).toBe(false);
     });
   });
 
