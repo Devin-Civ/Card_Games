@@ -76,10 +76,12 @@ describe("ScoundrelState", () => {
   });
 
   describe("isRoomCleared", () => {
-    it("identifies if the room is cleared", () => {
+    it("identifies if the room is cleared (one or less cards remaining)", () => {
       expect(isRoomCleared(state)).toBe(true);
       state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
       expect(isRoomCleared(state)).toBe(false);
+      state.room = [std("A", "S")];
+      expect(isRoomCleared(state)).toBe(true);
     });
   });
 });

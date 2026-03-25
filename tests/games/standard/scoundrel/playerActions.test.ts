@@ -2,9 +2,9 @@ import { it, describe, expect, beforeEach } from "vitest";
 import { createScoundrelState } from "../../../../src/games/standard/scoundrel/state";
 import {
   usePotion,
-  drawRoom,
   equipWeapon,
   destroyEquippedWeapon,
+  resetRoom,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { std } from "./cards.test";
 import {
@@ -63,7 +63,7 @@ describe("PlayerActions", () => {
     it("allows using a potion again in a new room", () => {
       state.player.health = 1;
       usePotion(state, std("2", "H"));
-      drawRoom(state);
+      resetRoom(state);
       expect(() => usePotion(state, std("3", "H"))).not.toThrow();
     });
   });

@@ -1,7 +1,12 @@
 import { it, describe, expect, beforeEach } from "vitest";
 import { createScoundrelState } from "../../../../src/games/standard/scoundrel/state";
-import { drawRoom, avoidRoom } from "../../../../src/games/standard/scoundrel/actions";
+import {
+  drawRoom,
+  avoidRoom,
+  resetRoom,
+} from "../../../../src/games/standard/scoundrel/actions";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
+import { std } from "./cards.test";
 
 describe("RoomActions", () => {
   let state: ScoundrelState;
@@ -44,6 +49,17 @@ describe("RoomActions", () => {
       state.ranFromPreviousRoom = true;
       avoidRoom(state);
       expect(state.room).toBe(firstRoom);
+    });
+  });
+  describe("resetRoom", () => {
+    it("draws a new room and resets room flags", () => {
+      state.room = [std("A", "S"), std("8", "H"), std("9", "D")];
+      state.ranFromPreviousRoom = true;
+      state.potionUsedInCurrentRoom = true;
+      resetRoom(state);
+      expect(state.room.length).toBe(4);
+      expect(state.ranFromPreviousRoom).toBe(false);
+      expect(state.potionUsedInCurrentRoom).toBe(false);
     });
   });
 });
