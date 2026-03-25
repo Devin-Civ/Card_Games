@@ -4,9 +4,13 @@ import {
   usePotion,
   drawRoom,
   equipWeapon,
+  destroyEquippedWeapon,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { std } from "./cards.test";
-import { createEquippedWeapon } from "../../../../src/games/standard/scoundrel/weapons";
+import {
+  addMonsterToWeapon,
+  createEquippedWeapon,
+} from "../../../../src/games/standard/scoundrel/weapons";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
 
 describe("PlayerActions", () => {
@@ -83,6 +87,24 @@ describe("PlayerActions", () => {
       expect(state.discardPile).not.toContainEqual(std("7", "D"));
       equipWeapon(state, std("8", "D"));
       expect(state.discardPile).toContainEqual(std("7", "D"));
+    });
+  });
+  describe("destoryWeapon", () => {
+    it("can destroy a weapon, discarding all slain monsters and the weapon card", () => {
+      equipWeapon(state, std("7", "D"));
+      addMonsterToWeapon(state.player.equippedWeapon!, std("A", "S"));
+      addMonsterToWeapon(state.player.equippedWeapon!, std("8", "S"));
+      destroyEquippedWeapon(state);
+      expect(state.discardPile).toContainEqual(std("7", "D"));
+      expect(state.discardPile).toContainEqual(std("A", "S"));
+      expect(state.discardPile).toContainEqual(std("8", "S"));
+      expect(state.player.equippedWeapon).toBeNull();
+    });
+
+    it("throws an error if a weapon is not equipped", () => {
+      expect(() => destroyEquippedWeapon(state)).toThrow(
+        "destroyEquippedWeapon expected a equipped weapon",
+      );
     });
   });
 });

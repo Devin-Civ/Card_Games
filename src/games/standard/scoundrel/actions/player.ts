@@ -34,7 +34,18 @@ export function equipWeapon(
     throw new Error("equipWeapon expected a weapon card");
   }
   if (state.player.equippedWeapon) {
-    discardCard(state, state.player.equippedWeapon.baseCard);
+    destroyEquippedWeapon(state);
   }
   state.player.equippedWeapon = createEquippedWeapon(weaponCard);
+}
+
+export function destroyEquippedWeapon(state: ScoundrelState): void {
+  if (!state.player.equippedWeapon) {
+    throw new Error("destroyEquippedWeapon expected a equipped weapon");
+  }
+  state.player.equippedWeapon.slainMonsters.forEach((monster) => {
+    discardCard(state, monster);
+  });
+  discardCard(state, state.player.equippedWeapon.baseCard);
+  state.player.equippedWeapon = null;
 }
