@@ -3,6 +3,7 @@ import {
   createScoundrelState,
   isGameOver,
   calculateFinalScore,
+  isRoomCleared,
 } from "../../../../src/games/standard/scoundrel/state";
 import { std } from "./cards.test";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
@@ -71,6 +72,14 @@ describe("ScoundrelState", () => {
         std("A", "H"),
       ]);
       expect(calculateFinalScore(state)).toBe(10 - 28 - 16);
+    });
+  });
+
+  describe("isRoomCleared", () => {
+    it("identifies if the room is cleared", () => {
+      expect(isRoomCleared(state)).toBe(true);
+      state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
+      expect(isRoomCleared(state)).toBe(false);
     });
   });
 });

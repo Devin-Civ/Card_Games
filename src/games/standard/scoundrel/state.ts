@@ -40,3 +40,7 @@ export function calculateFinalScore(state: ScoundrelState): number {
     getTotalMonsterStrength(state.dungeon.drawCards(state.dungeon.count))
   );
 }
+
+export function isRoomCleared(state: ScoundrelState): boolean {
+  return state.room.length <= 1;
+}
