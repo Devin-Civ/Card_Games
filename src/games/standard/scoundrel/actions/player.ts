@@ -5,7 +5,13 @@ import {
   createEquippedWeapon,
   validatePlayerHasEquippedWeapon,
 } from "../weapons";
-import { discardCard } from "./discard";
+
+export function discardCard(
+  state: ScoundrelState,
+  card: StandardPlayingCard,
+): void {
+  state.discardPile.push(card);
+}
 
 export function equipWeapon(
   state: ScoundrelState,

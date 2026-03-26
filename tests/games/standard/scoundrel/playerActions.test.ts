@@ -6,6 +6,7 @@ import {
   destroyEquippedWeapon,
   resetRoom,
   discardPotion,
+  discardCard,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { std } from "./cards.test";
 import {
@@ -18,6 +19,14 @@ describe("PlayerActions", () => {
   let state: ScoundrelState;
   beforeEach(() => {
     state = createScoundrelState();
+  });
+
+  describe("discardCard", () => {
+    it("can discard a card to the discard pile", () => {
+      const card = std("A", "S");
+      discardCard(state, card);
+      expect(state.discardPile).toContain(card);
+    });
   });
 
   describe("usePotion", () => {

@@ -6,7 +6,7 @@ import {
   validateCanSlayMonster,
   validatePlayerHasEquippedWeapon,
 } from "../weapons";
-import { discardCard } from "./discard";
+import { discardCard } from "./player";
 
 export function fightBarehanded(
   state: ScoundrelState,

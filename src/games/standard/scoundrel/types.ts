@@ -1,6 +1,12 @@
 import { Deck } from "../../../core/deck";
 import { StandardPlayingCard } from "../cards";
 
+type MonsterCard = { type: "monster"; card: StandardPlayingCard };
+type PotionCard = { type: "potion"; card: StandardPlayingCard };
+type WeaponCard = { type: "weapon"; card: StandardPlayingCard };
+
+export type ScoundrelCard = MonsterCard | PotionCard | WeaponCard;
+
 export type ScoundrelState = {
   dungeon: Deck<StandardPlayingCard>;
   player: ScoundrelPlayer;
