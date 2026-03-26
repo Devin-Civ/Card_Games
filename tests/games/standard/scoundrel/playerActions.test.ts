@@ -5,6 +5,7 @@ import {
   equipWeapon,
   destroyEquippedWeapon,
   resetRoom,
+  discardPotion,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { std } from "./cards.test";
 import {
@@ -65,6 +66,19 @@ describe("PlayerActions", () => {
       usePotion(state, std("2", "H"));
       resetRoom(state);
       expect(() => usePotion(state, std("3", "H"))).not.toThrow();
+    });
+  });
+
+  describe("discardPotion", () => {
+    it("can discard a potion, discarding the potion card", () => {
+      discardPotion(state, std("2", "H"));
+      expect(state.discardPile).toContainEqual(std("2", "H"));
+    });
+
+    it("throws an error if a non-potion card is attempted to be discarded", () => {
+      expect(() => discardPotion(state, std("A", "S"))).toThrow(
+        "discardPotion expected a potion card",
+      );
     });
   });
 

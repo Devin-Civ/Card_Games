@@ -3,6 +3,7 @@ import { isMonster, isPotion, isWeapon } from "./cards";
 import { CardActionType, ScoundrelState } from "./types";
 import { fightBarehanded, fightWithWeapon } from "./actions/combat";
 import { usePotion, equipWeapon } from "./actions/player";
+import { discardPotion } from "./actions/player";
 
 export function getAvailableActionsForCard(
   state: ScoundrelState,
@@ -28,7 +29,7 @@ export function getAvailableActionsForCard(
   );
 }
 
-export function chooseCard(
+export function applyActionToRoomCard(
   state: ScoundrelState,
   cardIndex: number,
   action: CardActionType,
@@ -64,6 +65,9 @@ function applyAction(
       break;
     case "equipWeapon":
       equipWeapon(state, state.room[cardIndex]);
+      break;
+    case "discardPotion":
+      discardPotion(state, state.room[cardIndex]);
       break;
   }
 }

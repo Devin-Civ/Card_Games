@@ -26,6 +26,16 @@ export function usePotion(
   state.potionUsedInCurrentRoom = true;
 }
 
+export function discardPotion(
+  state: ScoundrelState,
+  card: StandardPlayingCard,
+): void {
+  if (!isPotion(card)) {
+    throw new Error("discardPotion expected a potion card");
+  }
+  discardCard(state, card);
+}
+
 export function equipWeapon(
   state: ScoundrelState,
   weaponCard: StandardPlayingCard,
