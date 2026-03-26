@@ -30,9 +30,7 @@ describe("PlayerActions", () => {
 
     it("throws an error if a non-potion card is attempted to be applied", () => {
       const card = std("A", "S");
-      expect(() => usePotion(state, card)).toThrow(
-        "applyPotion expected a potion card",
-      );
+      expect(() => usePotion(state, card)).toThrow(/expected a potion card/);
     });
 
     it("discards the potion card after it is applied", () => {
@@ -77,7 +75,7 @@ describe("PlayerActions", () => {
 
     it("throws an error if a non-potion card is attempted to be discarded", () => {
       expect(() => discardPotion(state, std("A", "S"))).toThrow(
-        "discardPotion expected a potion card",
+        /expected a potion card/,
       );
     });
   });
@@ -92,7 +90,7 @@ describe("PlayerActions", () => {
 
     it("throws an error if a non-weapon card is attempted to be equipped", () => {
       expect(() => equipWeapon(state, std("A", "S"))).toThrow(
-        "equipWeapon expected a weapon card",
+        /expected a weapon card/,
       );
     });
 
@@ -117,7 +115,7 @@ describe("PlayerActions", () => {
 
     it("throws an error if a weapon is not equipped", () => {
       expect(() => destroyEquippedWeapon(state)).toThrow(
-        "destroyEquippedWeapon expected a equipped weapon",
+        /expected an equipped weapon/,
       );
     });
   });

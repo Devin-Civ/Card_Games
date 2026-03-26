@@ -43,7 +43,7 @@ describe("Weapons", () => {
     it("throws an error if a non-monster card is attempted to be added to a weapon", () => {
       const weapon: EquippedWeapon = createEquippedWeapon(std("7", "D"));
       expect(() => addMonsterToWeapon(weapon, std("A", "H"))).toThrow(
-        "addMonsterToWeapon expected a monster card",
+        /expected a monster card/,
       );
     });
 
@@ -51,10 +51,10 @@ describe("Weapons", () => {
       const weapon: EquippedWeapon = createEquippedWeapon(std("7", "D"));
       addMonsterToWeapon(weapon, std("8", "S"));
       expect(() => addMonsterToWeapon(weapon, std("9", "C"))).toThrow(
-        "addMonsterToWeapon expected a lower ranked monster than last slain",
+        /expected a lower ranked monster than last slain/,
       );
       expect(() => addMonsterToWeapon(weapon, std("8", "S"))).toThrow(
-        "addMonsterToWeapon expected a lower ranked monster than last slain",
+        /expected a lower ranked monster than last slain/,
       );
     });
   });

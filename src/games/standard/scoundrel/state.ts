@@ -1,8 +1,10 @@
-import { getTotalMonsterStrength, isMonster } from "./cards";
+import { StandardPlayingCard } from "../cards";
+import { isMonster, rankToValue } from "./cards";
 import { createScoundrelDeck } from "./createScoundrelDeck";
 import { ScoundrelState } from "./types";
+import { applyDamageToPlayer } from "./actions/combat";
 
-const DEFAULT_PLAYER_HEALTH = 20;
+export const DEFAULT_PLAYER_HEALTH = 20;
 
 export function createScoundrelState(): ScoundrelState {
   return {
@@ -14,9 +16,22 @@ export function createScoundrelState(): ScoundrelState {
     },
     room: [],
     discardPile: [],
-    ranFromPreviousRoom: false,
+    canRunFromRoom: true,
     potionUsedInCurrentRoom: false,
   };
+}
+
+export function isRoomCleared(state: ScoundrelState): boolean {
+  return state.room.length <= 1;
+}
+
+export function getFinalScore(state: ScoundrelState): number {
+  annihilatePlayerWithRemainingMonsters(state);
+  return state.player.health;
+}
+
+export function isGameOver(state: ScoundrelState): boolean {
+  return isPlayerDead(state) || isDungeonCleared(state);
 }
 
 function isPlayerDead(state: ScoundrelState): boolean {
@@ -29,18 +44,19 @@ function isDungeonCleared(state: ScoundrelState): boolean {
   );
 }
 
-export function isGameOver(state: ScoundrelState): boolean {
-  return isPlayerDead(state) || isDungeonCleared(state);
+function getTotalMonsterStrengthInArray(cards: StandardPlayingCard[]): number {
+  return cards
+    .filter(isMonster)
+    .reduce((sum, card) => sum + rankToValue(card), 0);
 }
 
-export function calculateFinalScore(state: ScoundrelState): number {
+function getTotalRemainingMonsterStrength(state: ScoundrelState): number {
   return (
-    state.player.health -
-    getTotalMonsterStrength(state.room) -
-    getTotalMonsterStrength(state.dungeon.drawCards(state.dungeon.count))
+    getTotalMonsterStrengthInArray(state.room) +
+    getTotalMonsterStrengthInArray(state.dungeon.drawCards(state.dungeon.count))
   );
 }
 
-export function isRoomCleared(state: ScoundrelState): boolean {
-  return state.room.length <= 1;
+function annihilatePlayerWithRemainingMonsters(state: ScoundrelState): void {
+  applyDamageToPlayer(state.player, getTotalRemainingMonsterStrength(state));
 }

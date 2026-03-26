@@ -4,7 +4,6 @@ import {
   isWeapon,
   isPotion,
   rankToValue,
-  getTotalMonsterStrength,
 } from "../../../../src/games/standard/scoundrel/cards.ts";
 import {
   Rank,
@@ -78,18 +77,5 @@ describe("Scoundrel", () => {
         expect(() => rankToValue(card)).toThrow();
       },
     );
-  });
-  describe("getTotalMonsterStrength", () => {
-    it("calculates the total monster strength in an array", () => {
-      const cards = [
-        std("A", "S"),
-        std("A", "C"),
-        std("A", "H"),
-        std("A", "D"),
-      ];
-      expect(getTotalMonsterStrength(cards)).toBe(28);
-      cards.push(std("4", "S"));
-      expect(getTotalMonsterStrength(cards)).toBe(32);
-    });
   });
 });

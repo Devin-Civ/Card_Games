@@ -36,17 +36,17 @@ describe("RoomActions", () => {
       expect(state.room.length).toBe(4);
     });
 
-    it("sets ranFromPreviousRoom to true when the player avoids the room", () => {
+    it("sets canRunFromRoom to false when the player avoids the room", () => {
       drawRoom(state);
-      expect(state.ranFromPreviousRoom).toBe(false);
+      expect(state.canRunFromRoom).toBe(true);
       avoidRoom(state);
-      expect(state.ranFromPreviousRoom).toBe(true);
+      expect(state.canRunFromRoom).toBe(false);
     });
 
-    it("doesn't let the player avoid the room if ranFromPreviousRoom is true", () => {
+    it("doesn't let the player avoid the room if canRunFromRoom is false", () => {
       drawRoom(state);
       const firstRoom = state.room;
-      state.ranFromPreviousRoom = true;
+      state.canRunFromRoom = false;
       avoidRoom(state);
       expect(state.room).toBe(firstRoom);
     });
@@ -54,11 +54,11 @@ describe("RoomActions", () => {
   describe("resetRoom", () => {
     it("draws a new room and resets room flags", () => {
       state.room = [std("A", "S"), std("8", "H"), std("9", "D")];
-      state.ranFromPreviousRoom = true;
+      state.canRunFromRoom = false;
       state.potionUsedInCurrentRoom = true;
       resetRoom(state);
       expect(state.room.length).toBe(4);
-      expect(state.ranFromPreviousRoom).toBe(false);
+      expect(state.canRunFromRoom).toBe(true);
       expect(state.potionUsedInCurrentRoom).toBe(false);
     });
   });

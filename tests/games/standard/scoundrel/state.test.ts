@@ -2,8 +2,9 @@ import { it, describe, expect, beforeEach } from "vitest";
 import {
   createScoundrelState,
   isGameOver,
-  calculateFinalScore,
+  getFinalScore,
   isRoomCleared,
+  DEFAULT_PLAYER_HEALTH,
 } from "../../../../src/games/standard/scoundrel/state";
 import { std } from "./cards.test";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
@@ -18,12 +19,12 @@ describe("ScoundrelState", () => {
       expect(state.dungeon.count).toBe(44);
     });
 
-    it("initializes player health to 20", () => {
-      expect(state.player.health).toBe(20);
+    it("initializes player health to DEFAULT_PLAYER_HEALTH", () => {
+      expect(state.player.health).toBe(DEFAULT_PLAYER_HEALTH);
     });
 
-    it("initializes player's max health to 20", () => {
-      expect(state.player.maxHealth).toBe(20);
+    it("initializes player's max health to DEFAULT_PLAYER_HEALTH", () => {
+      expect(state.player.maxHealth).toBe(DEFAULT_PLAYER_HEALTH);
     });
 
     it("initializes player's equipped weapon to null", () => {
@@ -59,19 +60,25 @@ describe("ScoundrelState", () => {
     });
   });
 
-  describe("calculateFinalScore", () => {
-    it("calculates the final score as player health minus strength of remaining monsters", () => {
+  describe("getFinalScore", () => {
+    it("calculates the final score as player health minus strength of remaining monsters using the room", () => {
       state.player.health = 10;
       state.dungeon.drawCards(state.dungeon.count);
-      expect(calculateFinalScore(state)).toBe(10);
+      expect(getFinalScore(state)).toBe(10);
       state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
-      expect(calculateFinalScore(state)).toBe(10 - 28);
+      expect(getFinalScore(state)).toBe(10 - 28);
+    });
+
+    it("calculates the final score as player health minus strength of remaining monsters using the dungeon and room", () => {
+      state.player.health = 10;
+      state.dungeon.drawCards(state.dungeon.count);
+      state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
       state.dungeon.addCardsToTop([
         std("8", "S"),
         std("8", "C"),
         std("A", "H"),
       ]);
-      expect(calculateFinalScore(state)).toBe(10 - 28 - 16);
+      expect(getFinalScore(state)).toBe(10 - (28 + 16));
     });
   });
 

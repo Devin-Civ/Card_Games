@@ -46,8 +46,20 @@ export function rankToValue(card: StandardPlayingCard): number {
   return RANK_TO_VALUE_MAP[card.rank];
 }
 
-export function getTotalMonsterStrength(cards: StandardPlayingCard[]): number {
-  return cards
-    .filter(isMonster)
-    .reduce((sum, card) => sum + rankToValue(card), 0);
+export function validateIsMonster(monster: StandardPlayingCard): void {
+  if (!isMonster(monster)) {
+    throw new Error("validateIsMonster expected a monster card");
+  }
+}
+
+export function validateIsPotion(card: StandardPlayingCard): void {
+  if (!isPotion(card)) {
+    throw new Error("validateIsPotion expected a potion card");
+  }
+}
+
+export function validateIsWeapon(card: StandardPlayingCard): void {
+  if (!isWeapon(card)) {
+    throw new Error("validateIsWeapon expected a weapon card");
+  }
 }

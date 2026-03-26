@@ -1,6 +1,6 @@
 import { StandardPlayingCard } from "../cards";
-import { isMonster, rankToValue } from "./cards";
-import type { EquippedWeapon } from "./types";
+import { validateIsMonster, rankToValue } from "./cards";
+import type { EquippedWeapon, ScoundrelState } from "./types";
 
 export function createEquippedWeapon(
   weaponCard: StandardPlayingCard,
@@ -12,32 +12,46 @@ export function createEquippedWeapon(
   };
 }
 
-function lastSlainMonster(weapon: EquippedWeapon): StandardPlayingCard | null {
-  return weapon.slainMonsters.length > 0
-    ? weapon.slainMonsters[weapon.slainMonsters.length - 1]
-    : null;
-}
-
 export function canSlayMonster(
   weapon: EquippedWeapon,
-  monster: StandardPlayingCard,
+  monsterToSlay: StandardPlayingCard,
 ): boolean {
-  const lastMonster = lastSlainMonster(weapon);
-  if (lastMonster === null) return true;
-  else return rankToValue(monster) < rankToValue(lastMonster);
+  const lastMonsterSlainWithWeapon = lastSlainMonster(weapon);
+  if (lastMonsterSlainWithWeapon === null) return true;
+  else
+    return rankToValue(monsterToSlay) < rankToValue(lastMonsterSlainWithWeapon);
 }
 
 export function addMonsterToWeapon(
   weapon: EquippedWeapon,
   monster: StandardPlayingCard,
 ): void {
-  if (!isMonster(monster)) {
-    throw new Error("addMonsterToWeapon expected a monster card");
-  }
-  if (lastSlainMonster(weapon) && !canSlayMonster(weapon, monster)) {
+  validateIsMonster(monster);
+  validateCanSlayMonster(weapon, monster);
+  weapon.slainMonsters.push(monster);
+}
+
+export function validateCanSlayMonster(
+  weapon: EquippedWeapon,
+  monsterToSlay: StandardPlayingCard,
+): void {
+  if (lastSlainMonster(weapon) && !canSlayMonster(weapon, monsterToSlay)) {
     throw new Error(
-      "addMonsterToWeapon expected a lower ranked monster than last slain",
+      "validateCanSlayMonster expected a lower ranked monster than last slain",
     );
   }
-  weapon.slainMonsters.push(monster);
+}
+
+export function validatePlayerHasEquippedWeapon(state: ScoundrelState): void {
+  if (!state.player.equippedWeapon) {
+    throw new Error(
+      "validatePlayerHasEquippedWeapon expected an equipped weapon",
+    );
+  }
+}
+
+function lastSlainMonster(weapon: EquippedWeapon): StandardPlayingCard | null {
+  return weapon.slainMonsters.length > 0
+    ? weapon.slainMonsters[weapon.slainMonsters.length - 1]
+    : null;
 }

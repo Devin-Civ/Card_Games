@@ -8,15 +8,23 @@ export function drawRoom(state: ScoundrelState): void {
 }
 
 export function avoidRoom(state: ScoundrelState): void {
-  if (state.ranFromPreviousRoom) return;
+  if (!state.canRunFromRoom) return;
+  placeRoomOnBottomOfDungeon(state);
+  resetAvoidedRoom(state);
+}
+
+function placeRoomOnBottomOfDungeon(state: ScoundrelState): void {
   state.dungeon.addCardsToBottom(state.room);
   state.room = [];
+}
+
+function resetAvoidedRoom(state: ScoundrelState): void {
   drawRoom(state);
-  state.ranFromPreviousRoom = true;
+  state.canRunFromRoom = false;
 }
 
 export function resetRoom(state: ScoundrelState): void {
   drawRoom(state);
-  state.ranFromPreviousRoom = false;
+  state.canRunFromRoom = true;
   state.potionUsedInCurrentRoom = false;
 }

@@ -6,7 +6,7 @@ export type ScoundrelState = {
   player: ScoundrelPlayer;
   room: StandardPlayingCard[];
   discardPile: StandardPlayingCard[];
-  ranFromPreviousRoom: boolean;
+  canRunFromRoom: boolean;
   potionUsedInCurrentRoom: boolean;
 };
 
@@ -22,9 +22,13 @@ export type EquippedWeapon = {
   upgradeBonus: number;
 };
 
-export type CardActionType =
+export type CardAction =
   | "fightBarehanded"
   | "fightWithWeapon"
   | "usePotion"
   | "discardPotion"
   | "equipWeapon";
+
+export type GameCommand =
+  | { kind: "runFromRoom" }
+  | { kind: "selectCard"; cardIndex: number; action: CardAction };
