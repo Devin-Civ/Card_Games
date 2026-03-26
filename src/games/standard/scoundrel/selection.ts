@@ -5,13 +5,20 @@ import { fightBarehanded, fightWithWeapon } from "./actions/combat";
 import { usePotion, equipWeapon } from "./actions/player";
 
 export function getAvailableActionsForCard(
+  state: ScoundrelState,
   card: StandardPlayingCard,
 ): CardActionType[] {
   if (isMonster(card)) {
-    return ["fightBarehanded", "fightWithWeapon"];
+    if (state.player.equippedWeapon) {
+      return ["fightBarehanded", "fightWithWeapon"];
+    }
+    return ["fightBarehanded"];
   }
   if (isPotion(card)) {
-    return ["usePotion"];
+    if (state.potionUsedInCurrentRoom) {
+      return ["discardPotion"];
+    }
+    return ["discardPotion", "usePotion"];
   }
   if (isWeapon(card)) {
     return ["equipWeapon"];
@@ -29,7 +36,9 @@ export function chooseCard(
   if (!state.room[cardIndex]) {
     throw new Error(`Card at index ${cardIndex} is not in the room`);
   }
-  if (!getAvailableActionsForCard(state.room[cardIndex]).includes(action)) {
+  if (
+    !getAvailableActionsForCard(state, state.room[cardIndex]).includes(action)
+  ) {
     throw new Error(
       `${action} is not a valid action for card at index ${cardIndex}`,
     );

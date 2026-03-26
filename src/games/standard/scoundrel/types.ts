@@ -26,4 +26,5 @@ export type CardActionType =
   | "fightBarehanded"
   | "fightWithWeapon"
   | "usePotion"
+  | "discardPotion"
   | "equipWeapon";
