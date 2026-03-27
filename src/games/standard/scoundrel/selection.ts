@@ -1,6 +1,11 @@
-import { StandardPlayingCard } from "../cards";
-import { isMonster, isPotion, isWeapon } from "./cards";
-import { CardAction, ScoundrelState } from "./types";
+import {
+  CardAction,
+  MonsterCard,
+  PotionCard,
+  ScoundrelCard,
+  ScoundrelState,
+  WeaponCard,
+} from "./types";
 import { fightBarehanded, fightWithWeapon } from "./actions/combat";
 import { usePotion, equipWeapon } from "./actions/player";
 import { discardPotion } from "./actions/player";
@@ -17,21 +22,21 @@ export function applyActionToRoomCard(
 
 export function getAvailableActionsForCard(
   state: ScoundrelState,
-  card: StandardPlayingCard,
+  card: ScoundrelCard,
 ): CardAction[] {
-  if (isMonster(card)) {
+  if (card.type === "monster") {
     if (state.player.equippedWeapon) {
       return ["fightBarehanded", "fightWithWeapon"];
     }
     return ["fightBarehanded"];
   }
-  if (isPotion(card)) {
+  if (card.type === "potion") {
     if (state.potionUsedInCurrentRoom) {
       return ["discardPotion"];
     }
     return ["discardPotion", "usePotion"];
   }
-  if (isWeapon(card)) {
+  if (card.type === "weapon") {
     return ["equipWeapon"];
   }
   throw new Error(
@@ -44,21 +49,28 @@ function applyAction(
   cardIndex: number,
   action: CardAction,
 ): void {
+  const selectedCard = state.room[cardIndex];
+
   switch (action) {
     case "fightBarehanded":
-      fightBarehanded(state, state.room[cardIndex]);
+      assertMonster(selectedCard);
+      fightBarehanded(state, selectedCard);
       break;
     case "fightWithWeapon":
-      fightWithWeapon(state, state.room[cardIndex]);
+      assertMonster(selectedCard);
+      fightWithWeapon(state, selectedCard);
       break;
     case "usePotion":
-      usePotion(state, state.room[cardIndex]);
-      break;
-    case "equipWeapon":
-      equipWeapon(state, state.room[cardIndex]);
+      assertPotion(selectedCard);
+      usePotion(state, selectedCard);
       break;
     case "discardPotion":
-      discardPotion(state, state.room[cardIndex]);
+      assertPotion(selectedCard);
+      discardPotion(state, selectedCard);
+      break;
+    case "equipWeapon":
+      assertWeapon(selectedCard);
+      equipWeapon(state, selectedCard);
       break;
   }
 }
@@ -93,5 +105,21 @@ function validateActionIsAvailable(
     throw new Error(
       `${action} is not a valid action for card at index ${cardIndex}`,
     );
+  }
+}
+
+function assertMonster(card: ScoundrelCard): asserts card is MonsterCard {
+  if (card.type !== "monster") {
+    throw new Error("Expected monster card for combat action");
+  }
+}
+function assertPotion(card: ScoundrelCard): asserts card is PotionCard {
+  if (card.type !== "potion") {
+    throw new Error("Expected potion card for potion action");
+  }
+}
+function assertWeapon(card: ScoundrelCard): asserts card is WeaponCard {
+  if (card.type !== "weapon") {
+    throw new Error("Expected weapon card for equip action");
   }
 }

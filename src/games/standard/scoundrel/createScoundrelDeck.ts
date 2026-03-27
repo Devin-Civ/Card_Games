@@ -1,16 +1,14 @@
 import { Deck } from "../../../core/deck";
-import { StandardPlayingCard } from "../cards";
+import { StandardPlayingCard, SuitedStandardPlayingCard } from "../cards";
 import { createStandardDeck } from "../createStandardDeck";
+import { createScoundrelCard } from "./cards";
+import { ScoundrelCard } from "./types";
 
-export function createScoundrelDeck(): Deck<StandardPlayingCard> {
-  const deck = createStandardDeck();
-  const cards = deck
-    .drawCards(52)
-    .filter(
-      (card) => !isRedFaceCard(card) && !isRedAce(card) && !isJoker(card),
-    );
-  deck.addCardsToTop(cards);
-  return deck;
+export function createScoundrelDeck(): Deck<ScoundrelCard> {
+  const standardDeck = createStandardDeck();
+  const cards = standardDeck.drawCards(standardDeck.count);
+  const filteredCards = filterUnusedCards(cards) as SuitedStandardPlayingCard[];
+  return new Deck<ScoundrelCard>(filteredCards.map(createScoundrelCard));
 }
 
 function isRedFaceCard(card: StandardPlayingCard): boolean {
@@ -31,4 +29,12 @@ function isRedAce(card: StandardPlayingCard): boolean {
 
 function isJoker(card: StandardPlayingCard): boolean {
   return card.kind === "joker";
+}
+
+function filterUnusedCards(
+  cards: StandardPlayingCard[],
+): StandardPlayingCard[] {
+  return cards.filter(
+    (card) => !isRedFaceCard(card) && !isRedAce(card) && !isJoker(card),
+  );
 }

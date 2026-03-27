@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { joker, std } from "./cards.test";
+import { monster, potion, weapon } from "./helpers";
 import {
   getAvailableActionsForCard,
   applyActionToRoomCard,
@@ -14,43 +14,37 @@ describe("Selection", () => {
     state = createScoundrelState();
     state.player.health = 15;
     state.player.maxHealth = 20;
-    state.room = [std("A", "S"), std("8", "H"), std("9", "D")];
+    state.room = [monster("A", "S"), potion("8", "H"), weapon("9", "D")];
   });
 
   describe("getAvailableActionsForCard", () => {
     it("returns equipWeapon for weapons", () => {
-      const actions = getAvailableActionsForCard(state, std("3", "D"));
+      const actions = getAvailableActionsForCard(state, weapon("3", "D"));
       expect(actions).toEqual(["equipWeapon"]);
     });
 
     it("only returns fightBarehanded for combat if no weapon is equipped", () => {
       state.player.equippedWeapon = null;
-      const actions = getAvailableActionsForCard(state, std("4", "S"));
+      const actions = getAvailableActionsForCard(state, monster("4", "S"));
       expect(actions).toEqual(["fightBarehanded"]);
     });
 
     it("returns fightBarehanded and fightWithWeapon for combat if a weapon is equipped", () => {
-      equipWeapon(state, std("3", "D"));
-      const actions = getAvailableActionsForCard(state, std("4", "S"));
+      equipWeapon(state, weapon("3", "D"));
+      const actions = getAvailableActionsForCard(state, monster("4", "S"));
       expect(actions).toEqual(["fightBarehanded", "fightWithWeapon"]);
     });
 
     it("returns discardPotion and usePotion for potions if no potion has been used in the current room", () => {
       state.potionUsedInCurrentRoom = false;
-      const actions = getAvailableActionsForCard(state, std("2", "H"));
+      const actions = getAvailableActionsForCard(state, potion("2", "H"));
       expect(actions).toEqual(["discardPotion", "usePotion"]);
     });
 
     it("returns discardPotion for potions if a potion has been used in the current room", () => {
       state.potionUsedInCurrentRoom = true;
-      const actions = getAvailableActionsForCard(state, std("2", "H"));
+      const actions = getAvailableActionsForCard(state, potion("2", "H"));
       expect(actions).toEqual(["discardPotion"]);
-    });
-
-    it("throws an error if a non-valid card is provided", () => {
-      expect(() => getAvailableActionsForCard(state, joker("red"))).toThrow(
-        "getAvailableActionsForCard expected a monster, weapon, or potion card",
-      );
     });
   });
   describe("applyActionToRoomCard", () => {
@@ -66,7 +60,7 @@ describe("Selection", () => {
 
     it("can choose a weapon from the room to interact with", () => {
       applyActionToRoomCard(state, 2, "equipWeapon");
-      expect(state.player.equippedWeapon?.baseCard).toEqual(std("9", "D"));
+      expect(state.player.equippedWeapon?.baseCard).toEqual(weapon("9", "D"));
     });
 
     it("throws an error if a non-valid action is chosen", () => {

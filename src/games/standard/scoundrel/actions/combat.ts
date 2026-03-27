@@ -1,6 +1,10 @@
-import { StandardPlayingCard } from "../../cards";
-import { rankToValue, validateIsMonster } from "../cards";
-import { EquippedWeapon, ScoundrelPlayer, ScoundrelState } from "../types";
+import { rankToValue } from "../cards";
+import {
+  EquippedWeapon,
+  MonsterCard,
+  ScoundrelPlayer,
+  ScoundrelState,
+} from "../types";
 import {
   addMonsterToWeapon,
   validateCanSlayMonster,
@@ -10,7 +14,7 @@ import { discardCard } from "./player";
 
 export function fightBarehanded(
   state: ScoundrelState,
-  monster: StandardPlayingCard,
+  monster: MonsterCard,
 ): void {
   const damage = calculateMonsterDamageBarehanded(monster);
   applyDamageToPlayer(state.player, damage);
@@ -19,7 +23,7 @@ export function fightBarehanded(
 
 export function fightWithWeapon(
   state: ScoundrelState,
-  monster: StandardPlayingCard,
+  monster: MonsterCard,
 ): void {
   validatePlayerHasEquippedWeapon(state);
   validateCanSlayMonster(state.player.equippedWeapon!, monster);
@@ -38,18 +42,14 @@ export function applyDamageToPlayer(
   player.health -= damage;
 }
 
-function calculateMonsterDamageBarehanded(
-  monster: StandardPlayingCard,
-): number {
-  validateIsMonster(monster);
+function calculateMonsterDamageBarehanded(monster: MonsterCard): number {
   return rankToValue(monster);
 }
 
 function calculateMonsterDamageWithWeapon(
-  monster: StandardPlayingCard,
+  monster: MonsterCard,
   weapon: EquippedWeapon,
 ): number {
-  validateIsMonster(monster);
   return Math.max(
     0,
     rankToValue(monster) - (rankToValue(weapon.baseCard) + weapon.upgradeBonus),

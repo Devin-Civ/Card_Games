@@ -1,23 +1,23 @@
-import { StandardPlayingCard } from "../../cards";
-import { validateIsPotion, validateIsWeapon, rankToValue } from "../cards";
-import { ScoundrelState } from "../types";
+import { rankToValue } from "../cards";
+import {
+  ScoundrelState,
+  WeaponCard,
+  ScoundrelCard,
+  PotionCard,
+} from "../types";
 import {
   createEquippedWeapon,
   validatePlayerHasEquippedWeapon,
 } from "../weapons";
 
-export function discardCard(
-  state: ScoundrelState,
-  card: StandardPlayingCard,
-): void {
+export function discardCard(state: ScoundrelState, card: ScoundrelCard): void {
   state.discardPile.push(card);
 }
 
 export function equipWeapon(
   state: ScoundrelState,
-  weaponCard: StandardPlayingCard,
+  weaponCard: WeaponCard,
 ): void {
-  validateIsWeapon(weaponCard);
   if (state.player.equippedWeapon) destroyEquippedWeapon(state);
   state.player.equippedWeapon = createEquippedWeapon(weaponCard);
 }
@@ -29,26 +29,18 @@ export function destroyEquippedWeapon(state: ScoundrelState): void {
   state.player.equippedWeapon = null;
 }
 
-export function usePotion(
-  state: ScoundrelState,
-  card: StandardPlayingCard,
-): void {
+export function usePotion(state: ScoundrelState, card: PotionCard): void {
   validatePotionCanBeUsed(state);
   applyPotion(state, card);
   discardCard(state, card);
   state.potionUsedInCurrentRoom = true;
 }
 
-export function discardPotion(
-  state: ScoundrelState,
-  card: StandardPlayingCard,
-): void {
-  validateIsPotion(card);
+export function discardPotion(state: ScoundrelState, card: PotionCard): void {
   discardCard(state, card);
 }
 
-function applyPotion(state: ScoundrelState, card: StandardPlayingCard): void {
-  validateIsPotion(card);
+function applyPotion(state: ScoundrelState, card: PotionCard): void {
   state.player.health = Math.min(
     state.player.health + rankToValue(card),
     state.player.maxHealth,

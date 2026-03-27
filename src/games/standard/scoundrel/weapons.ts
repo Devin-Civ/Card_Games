@@ -1,10 +1,12 @@
-import { StandardPlayingCard } from "../cards";
-import { validateIsMonster, rankToValue } from "./cards";
-import type { EquippedWeapon, ScoundrelState } from "./types";
+import { rankToValue } from "./cards";
+import type {
+  EquippedWeapon,
+  MonsterCard,
+  ScoundrelState,
+  WeaponCard,
+} from "./types";
 
-export function createEquippedWeapon(
-  weaponCard: StandardPlayingCard,
-): EquippedWeapon {
+export function createEquippedWeapon(weaponCard: WeaponCard): EquippedWeapon {
   return {
     baseCard: weaponCard,
     slainMonsters: [],
@@ -14,7 +16,7 @@ export function createEquippedWeapon(
 
 export function canSlayMonster(
   weapon: EquippedWeapon,
-  monsterToSlay: StandardPlayingCard,
+  monsterToSlay: MonsterCard,
 ): boolean {
   const lastMonsterSlainWithWeapon = lastSlainMonster(weapon);
   if (lastMonsterSlainWithWeapon === null) return true;
@@ -24,16 +26,15 @@ export function canSlayMonster(
 
 export function addMonsterToWeapon(
   weapon: EquippedWeapon,
-  monster: StandardPlayingCard,
+  monster: MonsterCard,
 ): void {
-  validateIsMonster(monster);
   validateCanSlayMonster(weapon, monster);
   weapon.slainMonsters.push(monster);
 }
 
 export function validateCanSlayMonster(
   weapon: EquippedWeapon,
-  monsterToSlay: StandardPlayingCard,
+  monsterToSlay: MonsterCard,
 ): void {
   if (lastSlainMonster(weapon) && !canSlayMonster(weapon, monsterToSlay)) {
     throw new Error(
@@ -50,7 +51,7 @@ export function validatePlayerHasEquippedWeapon(state: ScoundrelState): void {
   }
 }
 
-function lastSlainMonster(weapon: EquippedWeapon): StandardPlayingCard | null {
+function lastSlainMonster(weapon: EquippedWeapon): MonsterCard | null {
   return weapon.slainMonsters.length > 0
     ? weapon.slainMonsters[weapon.slainMonsters.length - 1]
     : null;

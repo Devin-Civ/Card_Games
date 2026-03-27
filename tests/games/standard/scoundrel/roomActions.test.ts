@@ -6,7 +6,7 @@ import {
   resetRoom,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
-import { std } from "./cards.test";
+import { monster, potion, weapon } from "./helpers";
 
 describe("RoomActions", () => {
   let state: ScoundrelState;
@@ -19,7 +19,7 @@ describe("RoomActions", () => {
       expect(state.room.length).toBe(0);
       drawRoom(state);
       expect(state.room.length).toBe(4);
-      state.room = [{ kind: "suited", rank: "A", suit: "S" }];
+      state.room = [monster("A", "C")];
       drawRoom(state);
       expect(state.room.length).toBe(4);
     });
@@ -53,7 +53,7 @@ describe("RoomActions", () => {
   });
   describe("resetRoom", () => {
     it("draws a new room and resets room flags", () => {
-      state.room = [std("A", "S"), std("8", "H"), std("9", "D")];
+      state.room = [monster("A", "S"), potion("8", "H"), weapon("9", "D")];
       state.canRunFromRoom = false;
       state.potionUsedInCurrentRoom = true;
       resetRoom(state);

@@ -1,17 +1,17 @@
 import { Deck } from "../../../core/deck";
-import { StandardPlayingCard } from "../cards";
+import { SuitedStandardPlayingCard } from "../cards";
 
-type MonsterCard = { type: "monster"; card: StandardPlayingCard };
-type PotionCard = { type: "potion"; card: StandardPlayingCard };
-type WeaponCard = { type: "weapon"; card: StandardPlayingCard };
+export type MonsterCard = { type: "monster"; card: SuitedStandardPlayingCard };
+export type PotionCard = { type: "potion"; card: SuitedStandardPlayingCard };
+export type WeaponCard = { type: "weapon"; card: SuitedStandardPlayingCard };
 
 export type ScoundrelCard = MonsterCard | PotionCard | WeaponCard;
 
 export type ScoundrelState = {
-  dungeon: Deck<StandardPlayingCard>;
+  dungeon: Deck<ScoundrelCard>;
   player: ScoundrelPlayer;
-  room: StandardPlayingCard[];
-  discardPile: StandardPlayingCard[];
+  room: ScoundrelCard[];
+  discardPile: ScoundrelCard[];
   canRunFromRoom: boolean;
   potionUsedInCurrentRoom: boolean;
 };
@@ -23,8 +23,8 @@ export type ScoundrelPlayer = {
 };
 
 export type EquippedWeapon = {
-  baseCard: StandardPlayingCard;
-  slainMonsters: StandardPlayingCard[];
+  baseCard: WeaponCard;
+  slainMonsters: MonsterCard[];
   upgradeBonus: number;
 };
 

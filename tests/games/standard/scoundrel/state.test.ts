@@ -6,7 +6,7 @@ import {
   isRoomCleared,
   DEFAULT_PLAYER_HEALTH,
 } from "../../../../src/games/standard/scoundrel/state";
-import { std } from "./cards.test";
+import { monster, potion, weapon } from "./helpers";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
 
 describe("ScoundrelState", () => {
@@ -51,11 +51,11 @@ describe("ScoundrelState", () => {
       expect(isGameOver(state)).toBe(false);
       state.dungeon.drawCards(state.dungeon.count);
       expect(isGameOver(state)).toBe(true);
-      state.room = [std("A", "S")];
+      state.room = [monster("A", "S")];
       expect(isGameOver(state)).toBe(false);
-      state.room = [std("A", "D"), std("A", "H")];
+      state.room = [weapon("10", "D"), potion("10", "H")];
       expect(isGameOver(state)).toBe(true);
-      state.dungeon.addCardsToTop([std("A", "H")]);
+      state.dungeon.addCardsToTop([monster("10", "C")]);
       expect(isGameOver(state)).toBe(false);
     });
   });
@@ -65,18 +65,28 @@ describe("ScoundrelState", () => {
       state.player.health = 10;
       state.dungeon.drawCards(state.dungeon.count);
       expect(getFinalScore(state)).toBe(10);
-      state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
+      state.room = [
+        monster("A", "S"),
+        monster("A", "C"),
+        potion("9", "H"),
+        weapon("9", "D"),
+      ];
       expect(getFinalScore(state)).toBe(10 - 28);
     });
 
     it("calculates the final score as player health minus strength of remaining monsters using the dungeon and room", () => {
       state.player.health = 10;
       state.dungeon.drawCards(state.dungeon.count);
-      state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
+      state.room = [
+        monster("A", "S"),
+        monster("A", "C"),
+        potion("9", "H"),
+        weapon("9", "D"),
+      ];
       state.dungeon.addCardsToTop([
-        std("8", "S"),
-        std("8", "C"),
-        std("A", "H"),
+        monster("8", "S"),
+        monster("8", "C"),
+        potion("9", "H"),
       ]);
       expect(getFinalScore(state)).toBe(10 - (28 + 16));
     });
@@ -85,9 +95,14 @@ describe("ScoundrelState", () => {
   describe("isRoomCleared", () => {
     it("identifies if the room is cleared (one or less cards remaining)", () => {
       expect(isRoomCleared(state)).toBe(true);
-      state.room = [std("A", "S"), std("A", "C"), std("A", "H"), std("A", "D")];
+      state.room = [
+        monster("A", "S"),
+        monster("A", "C"),
+        potion("9", "H"),
+        weapon("9", "D"),
+      ];
       expect(isRoomCleared(state)).toBe(false);
-      state.room = [std("A", "S")];
+      state.room = [monster("A", "S")];
       expect(isRoomCleared(state)).toBe(true);
     });
   });

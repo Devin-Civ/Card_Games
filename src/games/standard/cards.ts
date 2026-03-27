@@ -19,13 +19,17 @@ export const SUIT = ["H", "D", "C", "S"] as const;
 export type Rank = (typeof RANK)[number];
 export type Suit = (typeof SUIT)[number];
 
+export type SuitedStandardPlayingCard = {
+  kind: "suited";
+  rank: Rank;
+  suit: Suit;
+};
+
+export type JokerStandardPlayingCard = {
+  kind: "joker";
+  color: "red" | "black";
+};
+
 export type StandardPlayingCard =
-  | {
-      kind: "suited";
-      rank: Rank;
-      suit: Suit;
-    }
-  | {
-      kind: "joker";
-      color: "red" | "black";
-    };
+  | SuitedStandardPlayingCard
+  | JokerStandardPlayingCard;

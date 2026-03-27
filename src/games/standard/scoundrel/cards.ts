@@ -1,7 +1,7 @@
-import { StandardPlayingCard } from "../cards";
+import { Rank, StandardPlayingCard, SuitedStandardPlayingCard } from "../cards";
+import { ScoundrelCard } from "./types";
 
-const MONSTER_SUITS = ["S", "C"];
-const RANK_TO_VALUE_MAP = {
+const RANK_TO_VALUE_MAP: Record<Rank, number> = {
   "2": 2,
   "3": 3,
   "4": 4,
@@ -17,49 +17,62 @@ const RANK_TO_VALUE_MAP = {
   A: 14,
 };
 
-export function isMonster(card: StandardPlayingCard): boolean {
-  return card.kind === "suited" && MONSTER_SUITS.includes(card.suit);
+const MONSTER_SUITS = ["S", "C"];
+const MONSTER_RANKS = [
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "J",
+  "Q",
+  "K",
+  "A",
+];
+const WEAPON_SUITS = ["D"];
+const WEAPON_RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10"];
+const POTION_SUITS = ["H"];
+const POTION_RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
+export function rankToValue(card: ScoundrelCard): number {
+  return RANK_TO_VALUE_MAP[card.card.rank];
 }
 
-export function isWeapon(card: StandardPlayingCard): boolean {
-  const weaponRanks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
-  return (
-    card.kind === "suited" &&
-    card.suit === "D" &&
-    weaponRanks.includes(card.rank)
+export function createScoundrelCard(
+  card: SuitedStandardPlayingCard,
+): ScoundrelCard {
+  if (isMonster(card)) return { type: "monster", card };
+  if (isPotion(card)) return { type: "potion", card };
+  if (isWeapon(card)) return { type: "weapon", card };
+  throw new Error(
+    "createScoundrelCard expected a monster, potion, or weapon card",
   );
 }
 
-export function isPotion(card: StandardPlayingCard): boolean {
-  const potionRanks = ["2", "3", "4", "5", "6", "7", "8", "9", "10"];
+function isMonster(card: StandardPlayingCard): boolean {
   return (
     card.kind === "suited" &&
-    card.suit === "H" &&
-    potionRanks.includes(card.rank)
+    MONSTER_SUITS.includes(card.suit) &&
+    MONSTER_RANKS.includes(card.rank)
   );
 }
 
-export function rankToValue(card: StandardPlayingCard): number {
-  if (card.kind !== "suited") throw new Error("Card does not have a value");
-  if (!isMonster(card) && !isWeapon(card) && !isPotion(card))
-    throw new Error("Card is not a monster, weapon, or potion");
-  return RANK_TO_VALUE_MAP[card.rank];
+function isWeapon(card: StandardPlayingCard): boolean {
+  return (
+    card.kind === "suited" &&
+    WEAPON_SUITS.includes(card.suit) &&
+    WEAPON_RANKS.includes(card.rank)
+  );
 }
 
-export function validateIsMonster(monster: StandardPlayingCard): void {
-  if (!isMonster(monster)) {
-    throw new Error("validateIsMonster expected a monster card");
-  }
-}
-
-export function validateIsPotion(card: StandardPlayingCard): void {
-  if (!isPotion(card)) {
-    throw new Error("validateIsPotion expected a potion card");
-  }
-}
-
-export function validateIsWeapon(card: StandardPlayingCard): void {
-  if (!isWeapon(card)) {
-    throw new Error("validateIsWeapon expected a weapon card");
-  }
+function isPotion(card: StandardPlayingCard): boolean {
+  return (
+    card.kind === "suited" &&
+    POTION_SUITS.includes(card.suit) &&
+    POTION_RANKS.includes(card.rank)
+  );
 }

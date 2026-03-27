@@ -1,7 +1,6 @@
-import { StandardPlayingCard } from "../cards";
-import { isMonster, rankToValue } from "./cards";
+import { rankToValue } from "./cards";
 import { createScoundrelDeck } from "./createScoundrelDeck";
-import { ScoundrelState } from "./types";
+import { ScoundrelCard, ScoundrelState } from "./types";
 import { applyDamageToPlayer } from "./actions/combat";
 
 export const DEFAULT_PLAYER_HEALTH = 20;
@@ -40,13 +39,14 @@ function isPlayerDead(state: ScoundrelState): boolean {
 
 function isDungeonCleared(state: ScoundrelState): boolean {
   return (
-    state.dungeon.count === 0 && state.room.every((card) => !isMonster(card))
+    state.dungeon.count === 0 &&
+    state.room.every((card) => card.type !== "monster")
   );
 }
 
-function getTotalMonsterStrengthInArray(cards: StandardPlayingCard[]): number {
+function getTotalMonsterStrengthInArray(cards: ScoundrelCard[]): number {
   return cards
-    .filter(isMonster)
+    .filter((card) => card.type === "monster")
     .reduce((sum, card) => sum + rankToValue(card), 0);
 }
 

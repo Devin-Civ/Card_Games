@@ -1,81 +1,52 @@
 import { it, describe, expect } from "vitest";
-import {
-  isMonster,
-  isWeapon,
-  isPotion,
-  rankToValue,
-} from "../../../../src/games/standard/scoundrel/cards.ts";
-import {
-  Rank,
-  StandardPlayingCard,
-  Suit,
-} from "../../../../src/games/standard/cards.ts";
+import { rankToValue } from "../../../../src/games/standard/scoundrel/cards.ts";
+import { createScoundrelCard } from "../../../../src/games/standard/scoundrel/cards.ts";
+import { std, monster, weapon, potion } from "./helpers";
 
-export const std = (rank: Rank, suit: Suit): StandardPlayingCard => ({
-  kind: "suited",
-  rank,
-  suit,
-});
-
-export const joker = (color: "red" | "black"): StandardPlayingCard => ({
-  kind: "joker",
-  color,
-});
-
-describe("Scoundrel", () => {
-  describe("isMonster", () => {
-    it.each([
-      [std("A", "S"), true],
-      [std("A", "C"), true],
-      [joker("red"), false],
-      [std("A", "H"), false],
-    ])("identifies only black cards as monsters", (card, expected) => {
-      expect(isMonster(card)).toBe(expected);
-    });
-  });
-
-  describe("isWeapon", () => {
-    it.each([
-      [std("A", "D"), true],
-      [std("10", "D"), true],
-      [joker("red"), false],
-      [std("A", "H"), false],
-    ])(
-      "identifies only diamond ace and number cards as weapons",
-      (card, expected) => {
-        expect(isWeapon(card)).toBe(expected);
-      },
-    );
-  });
-
-  describe("isPotion", () => {
-    it.each([
-      [std("10", "H"), true],
-      [std("2", "H"), true],
-      [joker("red"), false],
-      [std("A", "D"), false],
-    ])("identifies only heart number cards as potions", (card, expected) => {
-      expect(isPotion(card)).toBe(expected);
-    });
-  });
-
+describe("ScoundrelCards", () => {
   describe("rankToValue", () => {
     it.each([
-      [std("A", "S"), 14],
-      [std("10", "S"), 10],
-      [std("J", "S"), 11],
-      [std("Q", "S"), 12],
-      [std("K", "S"), 13],
-      [std("2", "D"), 2],
+      [monster("A", "S"), 14],
+      [monster("10", "S"), 10],
+      [monster("J", "S"), 11],
+      [monster("Q", "S"), 12],
+      [monster("K", "S"), 13],
+      [weapon("2", "D"), 2],
+      [potion("8", "H"), 8],
     ])("converts a card's rank to a numeric value", (card, expected) => {
       expect(rankToValue(card)).toBe(expected);
     });
+  });
 
-    it.each([joker("red"), std("A", "H")])(
-      "throws when a card does not have a numeric value",
-      (card) => {
-        expect(() => rankToValue(card)).toThrow();
-      },
-    );
+  describe("createScoundrelCard", () => {
+    it("can make a MonsterCard from a StandardPlayingCard", () => {
+      const card = std("5", "S");
+      const monsterCard = createScoundrelCard(card);
+      expect(monsterCard).toEqual({ type: "monster", card });
+    });
+    it("can make a PotionCard from a StandardPlayingCard", () => {
+      const card = std("5", "H");
+      const potionCard = createScoundrelCard(card);
+      expect(potionCard).toEqual({ type: "potion", card });
+    });
+    it("can make a WeaponCard from a StandardPlayingCard", () => {
+      const card = std("5", "D");
+      const weaponCard = createScoundrelCard(card);
+      expect(weaponCard).toEqual({ type: "weapon", card });
+    });
+    it.each([
+      std("K", "H"),
+      std("J", "H"),
+      std("Q", "H"),
+      std("K", "D"),
+      std("J", "D"),
+      std("Q", "D"),
+      std("A", "H"),
+      std("A", "D"),
+    ])("throws when a card is not a monster, potion, or weapon", (card) => {
+      expect(() => createScoundrelCard(card)).toThrow(
+        /expected a monster, potion, or weapon card/,
+      );
+    });
   });
 });

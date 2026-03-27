@@ -8,12 +8,12 @@ import {
   discardPotion,
   discardCard,
 } from "../../../../src/games/standard/scoundrel/actions";
-import { std } from "./cards.test";
 import {
   addMonsterToWeapon,
   createEquippedWeapon,
 } from "../../../../src/games/standard/scoundrel/weapons";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
+import { monster, potion, weapon } from "./helpers";
 
 describe("PlayerActions", () => {
   let state: ScoundrelState;
@@ -23,7 +23,7 @@ describe("PlayerActions", () => {
 
   describe("discardCard", () => {
     it("can discard a card to the discard pile", () => {
-      const card = std("A", "S");
+      const card = monster("A", "S");
       discardCard(state, card);
       expect(state.discardPile).toContain(card);
     });
@@ -31,19 +31,14 @@ describe("PlayerActions", () => {
 
   describe("usePotion", () => {
     it("can apply a potion to the player", () => {
-      const card = std("9", "H");
+      const card = potion("9", "H");
       state.player.health = 10;
       usePotion(state, card);
       expect(state.player.health).toBe(19);
     });
 
-    it("throws an error if a non-potion card is attempted to be applied", () => {
-      const card = std("A", "S");
-      expect(() => usePotion(state, card)).toThrow(/expected a potion card/);
-    });
-
     it("discards the potion card after it is applied", () => {
-      const card = std("9", "H");
+      const card = potion("9", "H");
       state.player.health = 10;
       usePotion(state, card);
       expect(state.discardPile).toContain(card);
@@ -52,73 +47,62 @@ describe("PlayerActions", () => {
     it("doesn't increase player health beyond max health", () => {
       state.player.health = 10;
       state.player.maxHealth = 10;
-      usePotion(state, std("9", "H"));
+      usePotion(state, potion("9", "H"));
       expect(state.player.health).toBe(10);
       state.potionUsedInCurrentRoom = false;
       state.player.maxHealth = 15;
-      usePotion(state, std("9", "H"));
+      usePotion(state, potion("9", "H"));
       expect(state.player.health).toBe(15);
     });
 
     it("only allows one health potion per room", () => {
       state.player.health = 1;
-      usePotion(state, std("2", "H"));
-      expect(() => usePotion(state, std("3", "H"))).toThrow(
+      usePotion(state, potion("2", "H"));
+      expect(() => usePotion(state, potion("3", "H"))).toThrow(
         "Only one health potion can be used per room",
       );
     });
 
     it("allows using a potion again in a new room", () => {
       state.player.health = 1;
-      usePotion(state, std("2", "H"));
+      usePotion(state, potion("2", "H"));
       resetRoom(state);
-      expect(() => usePotion(state, std("3", "H"))).not.toThrow();
+      expect(() => usePotion(state, potion("3", "H"))).not.toThrow();
     });
   });
 
   describe("discardPotion", () => {
     it("can discard a potion, discarding the potion card", () => {
-      discardPotion(state, std("2", "H"));
-      expect(state.discardPile).toContainEqual(std("2", "H"));
-    });
-
-    it("throws an error if a non-potion card is attempted to be discarded", () => {
-      expect(() => discardPotion(state, std("A", "S"))).toThrow(
-        /expected a potion card/,
-      );
+      discardPotion(state, potion("2", "H"));
+      expect(state.discardPile).toContainEqual(potion("2", "H"));
     });
   });
 
   describe("equipWeapon", () => {
     it("can equip a weapon to a player", () => {
-      equipWeapon(state, std("7", "D"));
+      equipWeapon(state, weapon("7", "D"));
       expect(state.player.equippedWeapon).toEqual(
-        createEquippedWeapon(std("7", "D")),
-      );
-    });
-
-    it("throws an error if a non-weapon card is attempted to be equipped", () => {
-      expect(() => equipWeapon(state, std("A", "S"))).toThrow(
-        /expected a weapon card/,
+        createEquippedWeapon(weapon("7", "D")),
       );
     });
 
     it("discards the previously equipped weapon when a new weapon is equipped", () => {
-      equipWeapon(state, std("7", "D"));
-      expect(state.discardPile).not.toContainEqual(std("7", "D"));
-      equipWeapon(state, std("8", "D"));
-      expect(state.discardPile).toContainEqual(std("7", "D"));
+      equipWeapon(state, weapon("7", "D"));
+      expect(state.discardPile).not.toContainEqual(weapon("7", "D"));
+      equipWeapon(state, weapon("8", "D"));
+      expect(state.discardPile).toContainEqual(weapon("7", "D"));
     });
   });
+
   describe("destoryWeapon", () => {
     it("can destroy a weapon, discarding all slain monsters and the weapon card", () => {
-      equipWeapon(state, std("7", "D"));
-      addMonsterToWeapon(state.player.equippedWeapon!, std("A", "S"));
-      addMonsterToWeapon(state.player.equippedWeapon!, std("8", "S"));
+      equipWeapon(state, weapon("7", "D"));
+      addMonsterToWeapon(state.player.equippedWeapon!, monster("A", "S"));
+      addMonsterToWeapon(state.player.equippedWeapon!, monster("8", "S"));
       destroyEquippedWeapon(state);
-      expect(state.discardPile).toContainEqual(std("7", "D"));
-      expect(state.discardPile).toContainEqual(std("A", "S"));
-      expect(state.discardPile).toContainEqual(std("8", "S"));
+      expect(state.discardPile).toContainEqual(weapon("7", "D"));
+      expect(state.discardPile).toContainEqual(monster("A", "S"));
+      expect(state.discardPile).toContainEqual(monster("8", "S"));
       expect(state.player.equippedWeapon).toBeNull();
     });
 
