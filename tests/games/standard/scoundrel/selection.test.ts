@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { monster, potion, weapon } from "./helpers";
 import {
   getAvailableActionsForCard,
-  applyActionToRoomCard,
+  resolveCardSelection,
 } from "../../../../src/games/standard/scoundrel/selection";
 import { createScoundrelState } from "../../../../src/games/standard/scoundrel/state";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
@@ -49,28 +49,28 @@ describe("Selection", () => {
   });
   describe("applyActionToRoomCard", () => {
     it("can apply a fightBarehanded action to a monster in the room", () => {
-      applyActionToRoomCard(state, 0, "fightBarehanded");
+      resolveCardSelection(state, 0, "fightBarehanded");
       expect(state.player.health).toBe(1);
     });
 
     it("can choose a potion from the room to interact with", () => {
-      applyActionToRoomCard(state, 1, "usePotion");
+      resolveCardSelection(state, 1, "usePotion");
       expect(state.player.health).toBe(20);
     });
 
     it("can choose a weapon from the room to interact with", () => {
-      applyActionToRoomCard(state, 2, "equipWeapon");
+      resolveCardSelection(state, 2, "equipWeapon");
       expect(state.player.equippedWeapon?.baseCard).toEqual(weapon("9", "D"));
     });
 
     it("throws an error if a non-valid action is chosen", () => {
-      expect(() => applyActionToRoomCard(state, 0, "usePotion")).toThrow(
+      expect(() => resolveCardSelection(state, 0, "usePotion")).toThrow(
         "usePotion is not a valid action for card at index 0",
       );
     });
 
     it("removes the card from the room after it is chosen", () => {
-      applyActionToRoomCard(state, 0, "fightBarehanded");
+      resolveCardSelection(state, 0, "fightBarehanded");
       expect(state.room).toHaveLength(2);
     });
   });

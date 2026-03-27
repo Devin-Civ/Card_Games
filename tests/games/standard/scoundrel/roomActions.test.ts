@@ -2,8 +2,8 @@ import { it, describe, expect, beforeEach } from "vitest";
 import { createScoundrelState } from "../../../../src/games/standard/scoundrel/state";
 import {
   drawRoom,
-  avoidRoom,
   resetRoom,
+  runFromRoom,
 } from "../../../../src/games/standard/scoundrel/actions";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
 import { monster, potion, weapon } from "./helpers";
@@ -25,11 +25,11 @@ describe("RoomActions", () => {
     });
   });
 
-  describe("avoidRoom", () => {
+  describe("runFromRoom", () => {
     it("lets a player avoid the current room", () => {
       drawRoom(state);
       const firstRoom = state.room;
-      avoidRoom(state);
+      runFromRoom(state);
       firstRoom.forEach((card) => {
         expect(state.room).not.toContain(card);
       });
@@ -39,16 +39,15 @@ describe("RoomActions", () => {
     it("sets canRunFromRoom to false when the player avoids the room", () => {
       drawRoom(state);
       expect(state.canRunFromRoom).toBe(true);
-      avoidRoom(state);
+      runFromRoom(state);
       expect(state.canRunFromRoom).toBe(false);
     });
 
-    it("doesn't let the player avoid the room if canRunFromRoom is false", () => {
-      drawRoom(state);
-      const firstRoom = state.room;
+    it("throws an error if the player tries to avoid the room and canRunFromRoom is false", () => {
       state.canRunFromRoom = false;
-      avoidRoom(state);
-      expect(state.room).toBe(firstRoom);
+      expect(() => runFromRoom(state)).toThrow(
+        "Cannot run from room if canRunFromRoom is false",
+      );
     });
   });
   describe("resetRoom", () => {

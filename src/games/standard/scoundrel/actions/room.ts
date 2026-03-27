@@ -7,10 +7,11 @@ export function drawRoom(state: ScoundrelState): void {
   state.room.push(...state.dungeon.drawCards(cardsToDraw));
 }
 
-export function avoidRoom(state: ScoundrelState): void {
-  if (!state.canRunFromRoom) return;
+export function runFromRoom(state: ScoundrelState): void {
+  if (!state.canRunFromRoom)
+    throw new Error("Cannot run from room if canRunFromRoom is false");
   placeRoomOnBottomOfDungeon(state);
-  resetAvoidedRoom(state);
+  resetRunFromRoom(state);
 }
 
 function placeRoomOnBottomOfDungeon(state: ScoundrelState): void {
@@ -18,7 +19,7 @@ function placeRoomOnBottomOfDungeon(state: ScoundrelState): void {
   state.room = [];
 }
 
-function resetAvoidedRoom(state: ScoundrelState): void {
+function resetRunFromRoom(state: ScoundrelState): void {
   drawRoom(state);
   state.canRunFromRoom = false;
 }

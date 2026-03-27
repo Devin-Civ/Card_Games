@@ -35,6 +35,12 @@ export type CardAction =
   | "discardPotion"
   | "equipWeapon";
 
+export type GamePhase = "runOrFace" | "selectCard" | "gameOver";
+
 export type GameCommand =
   | { kind: "runFromRoom" }
-  | { kind: "selectCard"; cardIndex: number; action: CardAction };
+  | {
+      kind: "selectCard";
+      cardIndex: number;
+      action: CardAction;
+    };

@@ -1,7 +1,6 @@
 import { rankToValue } from "./cards";
 import { createScoundrelDeck } from "./createScoundrelDeck";
-import { ScoundrelCard, ScoundrelState } from "./types";
-import { applyDamageToPlayer } from "./actions/combat";
+import { GamePhase, ScoundrelCard, ScoundrelState } from "./types";
 
 export const DEFAULT_PLAYER_HEALTH = 20;
 
@@ -20,13 +19,18 @@ export function createScoundrelState(): ScoundrelState {
   };
 }
 
+export function getPhase(state: ScoundrelState): GamePhase {
+  if (isGameOver(state)) return "gameOver";
+  if (state.canRunFromRoom) return "runOrFace";
+  return "selectCard";
+}
+
 export function isRoomCleared(state: ScoundrelState): boolean {
   return state.room.length <= 1;
 }
 
 export function getFinalScore(state: ScoundrelState): number {
-  annihilatePlayerWithRemainingMonsters(state);
-  return state.player.health;
+  return state.player.health - getTotalRemainingMonsterStrength(state);
 }
 
 export function isGameOver(state: ScoundrelState): boolean {
@@ -55,8 +59,4 @@ function getTotalRemainingMonsterStrength(state: ScoundrelState): number {
     getTotalMonsterStrengthInArray(state.room) +
     getTotalMonsterStrengthInArray(state.dungeon.drawCards(state.dungeon.count))
   );
-}
-
-function annihilatePlayerWithRemainingMonsters(state: ScoundrelState): void {
-  applyDamageToPlayer(state.player, getTotalRemainingMonsterStrength(state));
 }

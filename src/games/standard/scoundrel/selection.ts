@@ -9,8 +9,9 @@ import {
 import { fightBarehanded, fightWithWeapon } from "./actions/combat";
 import { usePotion, equipWeapon } from "./actions/player";
 import { discardPotion } from "./actions/player";
+import { canSlayMonster } from "./weapons";
 
-export function applyActionToRoomCard(
+export function resolveCardSelection(
   state: ScoundrelState,
   cardIndex: number,
   action: CardAction,
@@ -24,24 +25,14 @@ export function getAvailableActionsForCard(
   state: ScoundrelState,
   card: ScoundrelCard,
 ): CardAction[] {
-  if (card.type === "monster") {
-    if (state.player.equippedWeapon) {
-      return ["fightBarehanded", "fightWithWeapon"];
-    }
-    return ["fightBarehanded"];
+  switch (card.type) {
+    case "monster":
+      return getAvailableMonsterActions(state, card);
+    case "potion":
+      return getAvailablePotionActions(state);
+    case "weapon":
+      return getAvailableWeaponActions();
   }
-  if (card.type === "potion") {
-    if (state.potionUsedInCurrentRoom) {
-      return ["discardPotion"];
-    }
-    return ["discardPotion", "usePotion"];
-  }
-  if (card.type === "weapon") {
-    return ["equipWeapon"];
-  }
-  throw new Error(
-    "getAvailableActionsForCard expected a monster, weapon, or potion card",
-  );
 }
 
 function applyAction(
@@ -49,28 +40,57 @@ function applyAction(
   cardIndex: number,
   action: CardAction,
 ): void {
-  const selectedCard = state.room[cardIndex];
+  const selectedCard: ScoundrelCard = state.room[cardIndex];
 
+  switch (selectedCard.type) {
+    case "monster":
+      applyMonsterAction(state, selectedCard, action);
+      break;
+    case "potion":
+      applyPotionAction(state, selectedCard, action);
+      break;
+    case "weapon":
+      applyWeaponAction(state, selectedCard, action);
+      break;
+  }
+}
+
+function applyMonsterAction(
+  state: ScoundrelState,
+  card: MonsterCard,
+  action: CardAction,
+): void {
   switch (action) {
     case "fightBarehanded":
-      assertMonster(selectedCard);
-      fightBarehanded(state, selectedCard);
+      fightBarehanded(state, card);
       break;
     case "fightWithWeapon":
-      assertMonster(selectedCard);
-      fightWithWeapon(state, selectedCard);
+      fightWithWeapon(state, card);
       break;
+  }
+}
+function applyPotionAction(
+  state: ScoundrelState,
+  card: PotionCard,
+  action: CardAction,
+): void {
+  switch (action) {
     case "usePotion":
-      assertPotion(selectedCard);
-      usePotion(state, selectedCard);
+      usePotion(state, card);
       break;
     case "discardPotion":
-      assertPotion(selectedCard);
-      discardPotion(state, selectedCard);
+      discardPotion(state, card);
       break;
+  }
+}
+function applyWeaponAction(
+  state: ScoundrelState,
+  card: WeaponCard,
+  action: CardAction,
+): void {
+  switch (action) {
     case "equipWeapon":
-      assertWeapon(selectedCard);
-      equipWeapon(state, selectedCard);
+      equipWeapon(state, card);
       break;
   }
 }
@@ -108,18 +128,20 @@ function validateActionIsAvailable(
   }
 }
 
-function assertMonster(card: ScoundrelCard): asserts card is MonsterCard {
-  if (card.type !== "monster") {
-    throw new Error("Expected monster card for combat action");
-  }
+function getAvailableMonsterActions(
+  state: ScoundrelState,
+  monster: MonsterCard,
+): CardAction[] {
+  const weapon = state.player.equippedWeapon;
+  if (weapon && canSlayMonster(weapon, monster)) {
+    return ["fightBarehanded", "fightWithWeapon"];
+  } else return ["fightBarehanded"];
 }
-function assertPotion(card: ScoundrelCard): asserts card is PotionCard {
-  if (card.type !== "potion") {
-    throw new Error("Expected potion card for potion action");
-  }
+function getAvailablePotionActions(state: ScoundrelState): CardAction[] {
+  if (state.potionUsedInCurrentRoom) {
+    return ["discardPotion"];
+  } else return ["discardPotion", "usePotion"];
 }
-function assertWeapon(card: ScoundrelCard): asserts card is WeaponCard {
-  if (card.type !== "weapon") {
-    throw new Error("Expected weapon card for equip action");
-  }
+function getAvailableWeaponActions(): CardAction[] {
+  return ["equipWeapon"];
 }

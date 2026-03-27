@@ -5,6 +5,7 @@ import {
   getFinalScore,
   isRoomCleared,
   DEFAULT_PLAYER_HEALTH,
+  getPhase,
 } from "../../../../src/games/standard/scoundrel/state";
 import { monster, potion, weapon } from "./helpers";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
@@ -37,6 +38,25 @@ describe("ScoundrelState", () => {
 
     it("initializes an empty discard pile", () => {
       expect(state.discardPile).toEqual([]);
+    });
+  });
+
+  describe("getPhase", () => {
+    it("returns 'runOrFace' when the player can run from the room", () => {
+      expect(getPhase(state)).toBe("runOrFace");
+    });
+
+    it("returns 'selectCard' when the player can't run from the room", () => {
+      state.canRunFromRoom = false;
+      expect(getPhase(state)).toBe("selectCard");
+    });
+
+    it("returns 'gameOver' when the player is dead or dungeon is cleared", () => {
+      state.player.health = 0;
+      expect(getPhase(state)).toBe("gameOver");
+      state = createScoundrelState();
+      state.dungeon.drawCards(state.dungeon.count);
+      expect(getPhase(state)).toBe("gameOver");
     });
   });
 
