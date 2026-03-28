@@ -14,6 +14,12 @@ export function runFromRoom(state: ScoundrelState): void {
   resetRunFromRoom(state);
 }
 
+export function resetRoom(state: ScoundrelState): void {
+  drawRoom(state);
+  state.canRunFromRoom = true;
+  state.potionUsedInCurrentRoom = false;
+}
+
 function placeRoomOnBottomOfDungeon(state: ScoundrelState): void {
   state.dungeon.addCardsToBottom(state.room);
   state.room = [];
@@ -22,10 +28,4 @@ function placeRoomOnBottomOfDungeon(state: ScoundrelState): void {
 function resetRunFromRoom(state: ScoundrelState): void {
   drawRoom(state);
   state.canRunFromRoom = false;
-}
-
-export function resetRoom(state: ScoundrelState): void {
-  drawRoom(state);
-  state.canRunFromRoom = true;
-  state.potionUsedInCurrentRoom = false;
 }

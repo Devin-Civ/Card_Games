@@ -1,6 +1,6 @@
 import { rankToValue } from "./cards";
 import { createScoundrelDeck } from "./createScoundrelDeck";
-import { GamePhase, ScoundrelCard, ScoundrelState } from "./types";
+import { GameCommand, GamePhase, ScoundrelCard, ScoundrelState } from "./types";
 
 export const DEFAULT_PLAYER_HEALTH = 20;
 
@@ -23,6 +23,20 @@ export function getPhase(state: ScoundrelState): GamePhase {
   if (isGameOver(state)) return "gameOver";
   if (state.canRunFromRoom) return "runOrFace";
   return "selectCard";
+}
+
+export function getAvailableCommandTypes(
+  state: ScoundrelState,
+): GameCommand["type"][] {
+  const phase = getPhase(state);
+  switch (phase) {
+    case "runOrFace":
+      return ["runFromRoom", "selectCard"];
+    case "selectCard":
+      return ["selectCard"];
+    case "gameOver":
+      return [];
+  }
 }
 
 export function isRoomCleared(state: ScoundrelState): boolean {
@@ -55,8 +69,10 @@ function getTotalMonsterStrengthInArray(cards: ScoundrelCard[]): number {
 }
 
 function getTotalRemainingMonsterStrength(state: ScoundrelState): number {
+  const remainingCards = state.dungeon.drawCards(state.dungeon.count);
+  state.dungeon.addCardsToTop([...remainingCards]);
   return (
     getTotalMonsterStrengthInArray(state.room) +
-    getTotalMonsterStrengthInArray(state.dungeon.drawCards(state.dungeon.count))
+    getTotalMonsterStrengthInArray(remainingCards)
   );
 }

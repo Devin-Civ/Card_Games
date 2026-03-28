@@ -1,6 +1,13 @@
-import { GameCommand, ScoundrelState } from "./types";
-import { createScoundrelState, getPhase, isGameOver } from "./state";
-import { drawRoom, runFromRoom } from "./actions/room";
+import { CommandResult, GameCommand, ScoundrelState } from "./types";
+import {
+  createScoundrelState,
+  getAvailableCommandTypes,
+  getFinalScore,
+  getPhase,
+  isGameOver,
+  isRoomCleared,
+} from "./state";
+import { drawRoom, resetRoom, runFromRoom } from "./actions/room";
 import { resolveCardSelection } from "./selection";
 
 export function startScoundrel(): ScoundrelState {
@@ -14,22 +21,27 @@ export function startScoundrel(): ScoundrelState {
 export function handleGameCommand(
   state: ScoundrelState,
   command: GameCommand,
-): void {
-  switch (command.kind) {
-    case "runFromRoom":
-      runFromRoom(state);
-      break;
+): CommandResult {
+  if (!isLegalCommand(state, command))
+    return { type: "error", message: "Invalid command for current phase" };
+  try {
+    switch (command.type) {
+      case "runFromRoom":
+        runFromRoom(state);
+        break;
+      case "selectCard":
+        resolveCardSelection(state, command.cardIndex, command.action);
+        break;
+    }
+  } catch (error) {
+    return { type: "error", message: error.message };
   }
+  if (isGameOver(state))
+    return { type: "gameOver", score: getFinalScore(state) };
+  if (isRoomCleared(state)) resetRoom(state);
+  return { type: "ok" };
 }
 
 function isLegalCommand(state: ScoundrelState, command: GameCommand): boolean {
-  const phase = getPhase(state);
-  switch (command.kind) {
-    case "runFromRoom":
-      return phase === "runOrFace";
-    case "selectCard":
-      return phase === "selectCard" || phase === "runOrFace";
-    default:
-      return false;
-  }
+  return getAvailableCommandTypes(state).includes(command.type);
 }

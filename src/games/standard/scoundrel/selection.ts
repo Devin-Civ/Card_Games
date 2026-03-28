@@ -19,6 +19,7 @@ export function resolveCardSelection(
   validateAction(state, cardIndex, action);
   applyAction(state, cardIndex, action);
   removeCardFromRoom(state, cardIndex);
+  state.canRunFromRoom = false;
 }
 
 export function getAvailableActionsForCard(

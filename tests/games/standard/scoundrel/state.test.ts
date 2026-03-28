@@ -6,6 +6,7 @@ import {
   isRoomCleared,
   DEFAULT_PLAYER_HEALTH,
   getPhase,
+  getAvailableCommandTypes,
 } from "../../../../src/games/standard/scoundrel/state";
 import { monster, potion, weapon } from "./helpers";
 import { ScoundrelState } from "../../../../src/games/standard/scoundrel/types";
@@ -57,6 +58,25 @@ describe("ScoundrelState", () => {
       state = createScoundrelState();
       state.dungeon.drawCards(state.dungeon.count);
       expect(getPhase(state)).toBe("gameOver");
+    });
+  });
+
+  describe("getAvailableCommandTypes", () => {
+    it("returns the available commands for the runOrFace phase", () => {
+      expect(getAvailableCommandTypes(state)).toEqual([
+        "runFromRoom",
+        "selectCard",
+      ]);
+    });
+
+    it("returns the available commands for the selectCard phase", () => {
+      state.canRunFromRoom = false;
+      expect(getAvailableCommandTypes(state)).toEqual(["selectCard"]);
+    });
+
+    it("returns the available commands for the gameOver phase", () => {
+      state.player.health = 0;
+      expect(getAvailableCommandTypes(state)).toEqual([]);
     });
   });
 

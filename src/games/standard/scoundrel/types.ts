@@ -38,9 +38,14 @@ export type CardAction =
 export type GamePhase = "runOrFace" | "selectCard" | "gameOver";
 
 export type GameCommand =
-  | { kind: "runFromRoom" }
+  | { type: "runFromRoom" }
   | {
-      kind: "selectCard";
+      type: "selectCard";
       cardIndex: number;
       action: CardAction;
     };
+
+export type CommandResult =
+  | { type: "ok" }
+  | { type: "gameOver"; score: number }
+  | { type: "error"; message: string };

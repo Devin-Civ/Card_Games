@@ -47,7 +47,7 @@ describe("Selection", () => {
       expect(actions).toEqual(["discardPotion"]);
     });
   });
-  describe("applyActionToRoomCard", () => {
+  describe("resolveCardSelection", () => {
     it("can apply a fightBarehanded action to a monster in the room", () => {
       resolveCardSelection(state, 0, "fightBarehanded");
       expect(state.player.health).toBe(1);
@@ -72,6 +72,12 @@ describe("Selection", () => {
     it("removes the card from the room after it is chosen", () => {
       resolveCardSelection(state, 0, "fightBarehanded");
       expect(state.room).toHaveLength(2);
+    });
+
+    it("sets canRunFromRoom to false after a card is chosen", () => {
+      state.room = [monster("A", "S")];
+      resolveCardSelection(state, 0, "fightBarehanded");
+      expect(state.canRunFromRoom).toBe(false);
     });
   });
 });
