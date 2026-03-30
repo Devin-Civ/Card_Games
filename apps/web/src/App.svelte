@@ -4,16 +4,24 @@
 
 <main class="app">
   <header class="app-header">
-    <h1>Card Games</h1>
-    <p class="tagline">
-      Shared UI in <code>src/lib/cards</code> · Scoundrel in
-      <code>src/lib/scoundrel</code>
-    </p>
+    <h1 class="app-title">Card Games</h1>
   </header>
   <ScoundrelShell />
 </main>
 
 <style>
+  :global(:root) {
+    --font-bitcount-single: "Bitcount Prop Single", system-ui;
+    --font-bitcount-double: "Bitcount Prop Double", system-ui;
+  }
+
+  :global(body) {
+    font-family: var(--font-bitcount-single);
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0;
+  }
+
   .app {
     max-width: 52rem;
     margin: 0 auto;
@@ -22,18 +30,15 @@
   .app-header {
     margin-bottom: 1.5rem;
   }
-  .app-header h1 {
+  .app-title {
     margin: 0 0 0.35rem;
     font-size: 1.75rem;
-    font-weight: 650;
+    font-weight: 400;
     letter-spacing: -0.02em;
+    font-family: var(--font-bitcount-double);
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0;
   }
-  .tagline {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.85;
-  }
-  .tagline code {
-    font-size: 0.85em;
-  }
+
 </style>

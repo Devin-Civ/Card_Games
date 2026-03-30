@@ -2,13 +2,17 @@
   import {
     startScoundrel,
     handleGameCommand,
-    getPhase,
     getAvailableCommandTypes,
     type ScoundrelState,
+    getAvailableActionsForCard,
+    type CardAction,
   } from "@card-games/scoundrel";
+  import { CardSprite } from "$lib/components";
 
   let game: ScoundrelState = $state(startScoundrel());
   let lastResult = $state("");
+  let selectedCardIndex = $state<number | null>(null);
+  let interactChoices: CardAction[] = $derived(getInteractChoices(selectedCardIndex));
 
   function newGame() {
     game = startScoundrel();
@@ -21,21 +25,57 @@
     );
   }
 
-  function selectCard() {
+  function selectCard(index: number) {
+    selectedCardIndex = index;
+    if (interactChoices.length === 1) {
+      selectAction(interactChoices[0]);
+    }
+  }
+
+  function getInteractChoices( index: number | null): CardAction[] {
+    if (index === null) return [];
+    return getAvailableActionsForCard(game, game.room[index]);
+  }
+
+  function executeAction(index: number, action: CardAction) {
+    lastResult = JSON.stringify(
+      handleGameCommand(game, { type: "selectCard", cardIndex: index, action: action }),
+    );
+  }
+
+  function cancelSelection() {
+    selectedCardIndex = null;
+  }
+
+  function selectAction(action: CardAction) {
+    executeAction(selectedCardIndex!, action);
+    selectedCardIndex = null;
   }
 </script>
 
 <section class="shell" aria-labelledby="scoundrel-title">
-  <h2 id="scoundrel-title">Scoundrel</h2>
+  <h2 id="scoundrel-title" class="title-text">Scoundrel</h2>
   <p class="status">
-    Phase <strong>{getPhase(game)}</strong> · Room
-    <strong>{game.room.length}</strong> cards · Dungeon
-    <strong>{game.dungeon.count}</strong>
+    Health <span class="value-text {game.player.health > 10 ? 'high_hp' : game.player.health > 0 ? 'low_hp' : 'dead-hp'}">{game.player.health}</span> · Dungeon
+    <span class="value-text">{game.dungeon.count}</span> · Weapon 
+    {#if game.player.equippedWeapon}<span class="value-text">{game.player.equippedWeapon.baseCard.card.rank}</span>
+    {#if game.player.equippedWeapon.slainMonsters.length > 0}
+      {#each game.player.equippedWeapon.slainMonsters as monster (`${monster.card.rank}-${monster.card.suit}`)}
+        <span class="slain-monster">({monster.card.rank} of {monster.card.suit})</span>
+      {/each}
+    {/if}
+    {:else}<span class="value-text">None</span>{/if}
   </p>
   <div class="room">
-    {#each game.room as card}
+    {#each game.room as card, index (`${card.card.rank}-${card.card.suit}-${index}`)}
       <div class="card">
-        <button type="button" onclick={() => selectCard()}>{card.card.rank} of {card.card.suit}</button>
+        <button
+          type="button"
+          class="card-btn"
+          onclick={() => selectCard(index)}
+        >
+          <CardSprite rank={card.card.rank} suit={card.card.suit} />
+        </button>
       </div>
     {/each}
   </div>
@@ -43,6 +83,12 @@
     <button type="button" onclick={newGame}>New game</button>
     {#if getAvailableCommandTypes(game).includes("runFromRoom")}
       <button type="button" onclick={runFromRoom}>Run from room</button>
+    {/if}
+    {#if interactChoices.length > 1}
+        {#each interactChoices as choice (choice)}
+          <button type="button" onclick={() => selectAction(choice)}>{choice}</button>
+        {/each}
+        <button type="button" onclick={cancelSelection}>Cancel</button>
     {/if}
   </div>
   {#if lastResult}
@@ -52,14 +98,23 @@
 
 <style>
   .shell {
+    font-family: var(--font-bitcount-single, "Bitcount Prop Single", system-ui);
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0;
     padding: 1rem 1.25rem;
     border-radius: 12px;
     border: 1px solid color-mix(in srgb, CanvasText 18%, transparent);
     background: color-mix(in srgb, Canvas 92%, CanvasText 4%);
   }
-  h2 {
+  .title-text {
     margin: 0 0 0.5rem;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    font-family: var(--font-bitcount-double, "Bitcount Prop Double", system-ui);
+    font-weight: 400;
+  }
+  .value-text {
+    font-family: var(--font-bitcount-double, "Bitcount Prop Double", system-ui);
   }
   .status {
     margin: 0 0 1rem;
@@ -91,11 +146,36 @@
     background: color-mix(in srgb, CanvasText 6%, transparent);
   }
   .room {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap; /* default for flex, but explicit helps */
-  align-items: center;
-  gap: 1.5rem;
-  padding-bottom: 1rem;
-}
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+  }
+  .card-btn {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+    border-radius: 8px;
+    line-height: 0;
+  }
+  .card-btn:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+  .card-btn :global(.card-sprite) {
+    display: block;
+  }
+  .high_hp {
+    color: green;
+  }
+  .low_hp {
+    color: red;
+  }
+  .dead-hp {
+    color: darkred;
+  }
 </style>
