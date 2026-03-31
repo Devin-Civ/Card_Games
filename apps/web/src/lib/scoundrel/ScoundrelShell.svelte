@@ -56,15 +56,15 @@
 <section class="shell" aria-labelledby="scoundrel-title">
   <h2 id="scoundrel-title" class="title-text">Scoundrel</h2>
   <p class="status">
-    Health <span class="value-text {game.player.health > 10 ? 'high_hp' : game.player.health > 0 ? 'low_hp' : 'dead-hp'}">{game.player.health}</span> · Dungeon
-    <span class="value-text">{game.dungeon.count}</span> · Weapon 
-    {#if game.player.equippedWeapon}<span class="value-text">{game.player.equippedWeapon.baseCard.card.rank}</span>
+    Health <strong class={game.player.health > 10 ? 'high_hp' : game.player.health > 0 ? 'low_hp' : 'dead-hp'}>{game.player.health}</strong> · Dungeon
+    <strong>{game.dungeon.count}</strong> · Weapon 
+    {#if game.player.equippedWeapon}<strong>{game.player.equippedWeapon.baseCard.card.rank}</strong>
     {#if game.player.equippedWeapon.slainMonsters.length > 0}
       {#each game.player.equippedWeapon.slainMonsters as monster (`${monster.card.rank}-${monster.card.suit}`)}
         <span class="slain-monster">({monster.card.rank} of {monster.card.suit})</span>
       {/each}
     {/if}
-    {:else}<span class="value-text">None</span>{/if}
+    {:else}<strong>None</strong>{/if}
   </p>
   <div class="room">
     {#each game.room as card, index (`${card.card.rank}-${card.card.suit}-${index}`)}
@@ -98,10 +98,10 @@
 
 <style>
   .shell {
-    font-family: var(--font-bitcount-single, "Bitcount Prop Single", system-ui);
-    font-optical-sizing: auto;
-    font-style: normal;
-    font-variation-settings: "slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0;
+    font-family: var(--font-body);
+    font-optical-sizing: var(--font-optical-sizing);
+    font-style: var(--font-style);
+    font-variation-settings: var(--font-variation-settings);
     padding: 1rem 1.25rem;
     border-radius: 12px;
     border: 1px solid color-mix(in srgb, CanvasText 18%, transparent);
@@ -110,11 +110,9 @@
   .title-text {
     margin: 0 0 0.5rem;
     font-size: 1.5rem;
-    font-family: var(--font-bitcount-double, "Bitcount Prop Double", system-ui);
-    font-weight: 400;
-  }
-  .value-text {
-    font-family: var(--font-bitcount-double, "Bitcount Prop Double", system-ui);
+    font-optical-sizing: var(--font-optical-sizing);
+    font-style: var(--font-style);
+    font-variation-settings: var(--font-variation-settings);
   }
   .status {
     margin: 0 0 1rem;

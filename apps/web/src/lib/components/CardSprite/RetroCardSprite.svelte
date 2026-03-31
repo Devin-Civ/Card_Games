@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Rank, Suit } from "@card-games/standard-cards";
-  import { INDIVIDUAL_CARD_IMAGES } from "$lib/assets/cards/individualSheets";
+  import { POCKET_SUIT_SHEETS } from "$lib/assets/cards/sheets";
+  import { getCardFaceSpriteStyle } from "./spriteData";
 
   let {
     rank,
@@ -17,15 +18,18 @@
   const ariaLabel = $derived(
     label ?? `Playing card ${rank} of ${suit}`,
   );
-  const cardUrl = $derived(INDIVIDUAL_CARD_IMAGES[suit][rank]);
+  const sheetUrl = $derived(POCKET_SUIT_SHEETS[suit]);
+  const spriteStyle = $derived(
+    `background-image: url(${sheetUrl}); ${getCardFaceSpriteStyle(rank)}`,
+  );
 </script>
 
-<img
+<span
   class="card-sprite {className}"
-  src={cardUrl}
-  alt={ariaLabel}
-  loading="lazy"
-/>
+  style={spriteStyle}
+  role="img"
+  aria-label={ariaLabel}
+></span>
 
 <style>
   .card-sprite {
@@ -33,6 +37,7 @@
     width: var(--card-sprite-w, 4.75rem);
     aspect-ratio: 5 / 7;
     vertical-align: middle;
+    image-rendering: pixelated;
     border-radius: 6px;
     box-shadow:
       0 1px 2px color-mix(in srgb, CanvasText 25%, transparent),
