@@ -135,14 +135,16 @@ function getAvailableMonsterActions(
 ): CardAction[] {
   const weapon = state.player.equippedWeapon;
   if (weapon && canSlayMonster(weapon, monster)) {
-    return ["fightBarehanded", "fightWithWeapon"];
+    return ["fightWithWeapon", "fightBarehanded"];
   } else return ["fightBarehanded"];
 }
+
 function getAvailablePotionActions(state: ScoundrelState): CardAction[] {
   if (state.potionUsedInCurrentRoom) {
     return ["discardPotion"];
-  } else return ["discardPotion", "usePotion"];
+  } else return ["usePotion", "discardPotion"];
 }
+
 function getAvailableWeaponActions(): CardAction[] {
   return ["equipWeapon"];
 }

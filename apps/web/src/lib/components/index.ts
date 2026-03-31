@@ -4,6 +4,7 @@
  */
 
 export { default as CardSprite } from "./CardSprite/CardSprite.svelte";
+export { default as ActionIconButton } from "./ActionIconButton.svelte";
 export { default as RetroCardSprite } from "./CardSprite/RetroCardSprite.svelte";
 export { POCKET_FACE_STRIP, getCardFaceSpriteStyle } from "./CardSprite/spriteData";
 export { POCKET_SUIT_SHEETS } from "$lib/assets/cards/sheets";

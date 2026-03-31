@@ -32,13 +32,13 @@ describe("Selection", () => {
     it("returns fightBarehanded and fightWithWeapon for combat if a weapon is equipped", () => {
       equipWeapon(state, weapon("3", "D"));
       const actions = getAvailableActionsForCard(state, monster("4", "S"));
-      expect(actions).toEqual(["fightBarehanded", "fightWithWeapon"]);
+      expect(actions).toEqual(["fightWithWeapon", "fightBarehanded"]);
     });
 
     it("returns discardPotion and usePotion for potions if no potion has been used in the current room", () => {
       state.potionUsedInCurrentRoom = false;
       const actions = getAvailableActionsForCard(state, potion("2", "H"));
-      expect(actions).toEqual(["discardPotion", "usePotion"]);
+      expect(actions).toEqual(["usePotion", "discardPotion"]);
     });
 
     it("returns discardPotion for potions if a potion has been used in the current room", () => {
