@@ -3,7 +3,7 @@ import type { ScoundrelState } from "../types";
 const ROOM_SIZE = 4;
 
 export function drawRoom(state: ScoundrelState): void {
-  const cardsToDraw = ROOM_SIZE - state.room.length;
+  const cardsToDraw = cardsToFillRoomOrEmptyDungeon(state);
   state.room.push(...state.dungeon.drawCards(cardsToDraw));
 }
 
@@ -28,4 +28,8 @@ function placeRoomOnBottomOfDungeon(state: ScoundrelState): void {
 function resetRunFromRoom(state: ScoundrelState): void {
   drawRoom(state);
   state.canRunFromRoom = false;
+}
+
+function cardsToFillRoomOrEmptyDungeon(state: ScoundrelState): number {
+  return Math.min(ROOM_SIZE - state.room.length, state.dungeon.count);
 }

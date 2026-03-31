@@ -19,6 +19,14 @@ describe("RoomActions", () => {
       drawRoom(state);
       expect(state.room.length).toBe(4);
     });
+
+    it("doesn't draw more cards than there are in the dungeon", () => {
+      state.dungeon.drawCards(state.dungeon.count);
+      state.dungeon.addCardsToBottom([monster("A", "C")]);
+      drawRoom(state);
+      expect(state.room.length).toBe(1);
+      expect(state.dungeon.count).toBe(0);
+    });
   });
 
   describe("runFromRoom", () => {
