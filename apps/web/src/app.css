@@ -1,24 +1,10 @@
 :root {
-  --font-body: system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Chakra Petch", system-ui;
   --font-optical-sizing: auto;
   --font-style: normal;
   --font-variation-settings: normal;
   line-height: 1.45;
   color-scheme: light dark;
-}
-
-body[data-font-theme="retro"] {
-  --font-body: "Bitcount Prop Single", system-ui;
-  --font-optical-sizing: auto;
-  --font-style: normal;
-  --font-variation-settings: "slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0;
-}
-
-body[data-font-theme="classic"] {
-  --font-body: "Chakra Petch", system-ui;
-  --font-optical-sizing: auto;
-  --font-style: normal;
-  --font-variation-settings: normal;
 }
 
 *,
