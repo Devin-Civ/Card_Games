@@ -5,3 +5,5 @@
 
 export { default as CardSprite } from "./CardSprite/CardSprite.svelte";
 export { default as ActionIconButton } from "./ActionIconButton.svelte";
+export { default as CardSlotOverlay } from "./CardSlotOverlay.svelte";
+export { default as FloatingTooltip } from "./FloatingTooltip.svelte";

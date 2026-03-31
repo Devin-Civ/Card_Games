@@ -4,12 +4,25 @@
     label,
     onClick,
     className = "",
+    tooltipText = "",
+    onTooltipStart,
+    onTooltipMove,
+    onTooltipEnd,
   }: {
     iconSrc: string;
     label: string;
     onClick: () => void;
     className?: string;
+    tooltipText?: string;
+    onTooltipStart?: (text: string, e: MouseEvent | FocusEvent) => void;
+    onTooltipMove?: (e: MouseEvent) => void;
+    onTooltipEnd?: () => void;
   } = $props();
+
+  function handleTooltipStart(event: MouseEvent | FocusEvent): void {
+    if (!tooltipText) return;
+    onTooltipStart?.(tooltipText, event);
+  }
 </script>
 
 <button
@@ -17,6 +30,11 @@
   class={`action-icon-btn ${className}`.trim()}
   aria-label={label}
   onclick={onClick}
+  onmouseenter={handleTooltipStart}
+  onmousemove={onTooltipMove}
+  onmouseleave={onTooltipEnd}
+  onfocus={handleTooltipStart}
+  onblur={onTooltipEnd}
 >
   <img src={iconSrc} alt="" aria-hidden="true" />
 </button>
